@@ -2,7 +2,7 @@
 // 文件名称: GameManager.cs
 // 作者: 刘垚
 // 创建日期: 2024.11.18
-// 更新日期：2024.11.24
+// 更新日期：2024.11.27
 // 使用的设计模式：单例模式
 // 备注：游戏的管理类，负责游戏进程等
 // =============================================================================
@@ -57,6 +57,10 @@ public class GameManager : MonoBehaviour
     public int currentHP = 100;
     [HideInInspector]
     public int timerDisplay = 0;
+
+    //计算羁绊的两个变量
+    public Dictionary<HeroType, int> heroTypeCount;
+    public List<HeroBonus> activeBonusList;
 
     //两个在拖动英雄时维护的变量
     private GameObject draggedHero = null;
@@ -164,6 +168,36 @@ public class GameManager : MonoBehaviour
             if (IsAllHeroDead())
                 EndRound();
 
+        }
+        else if (currentGameStage == GameStage.Combat)
+        {
+            currentGameStage = GameStage.Preparation;
+
+            uI.SetTimerTextActive(true);
+
+            ResetHeros();
+
+            //尝试对可能升级的英雄进行升级
+            for (int i = 0; i < gameHeroData.herosArray.Length; i++)
+            {
+                TryUpgradeHero(gameHeroData.herosArray[i]);
+            }
+
+            //增加加金币
+            currentGold += CalculateIncome();
+
+            //更新UI
+            uI.UpdateUI();
+
+            //刷新商店
+            shop.RefreshShop(true);
+
+            //检查是否失败
+            if (currentHP <= 0)
+            {
+                currentGameStage = GameStage.Loss;
+                uI.ShowLossScreen();
+            }
 
         }
     }
@@ -406,6 +440,8 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+            //每次拖动结束进行羁绊的重新计算
+            CalculateBonuses();
 
             currentHeroCount = GetHeroCountOnHexGrid();
 
@@ -548,5 +584,141 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //计算增加金币函数
+    private int CalculateIncome()
+    {
+        int income = 0;
 
+        //banked gold
+        int bank = (int)(currentGold / 10);
+
+
+        income += baseGoldIncome;
+        income += bank;
+
+        return income;
+    }
+
+    //玩家受到伤害
+    public void TakeDamage(int damage)
+    {
+        currentHP -= damage;
+
+        uI.UpdateUI();
+
+    }
+
+    //计算羁绊
+    private void CalculateBonuses()
+    {
+        //初始化字典
+        heroTypeCount = new Dictionary<HeroType, int>();
+
+        //遍历六边形棋盘
+        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        {
+            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+            {
+                if (gridHerosArray[x, z] != null)
+                {
+                    Hero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
+
+                    if (heroTypeCount.ContainsKey(c.type1))
+                    {
+                        int cCount = 0;
+                        heroTypeCount.TryGetValue(c.type1, out cCount);
+
+                        cCount++;
+
+                        heroTypeCount[c.type1] = cCount;
+                    }
+                    else
+                    {
+                        heroTypeCount.Add(c.type1, 1);
+                    }
+
+                    if (heroTypeCount.ContainsKey(c.type2))
+                    {
+                        int cCount = 0;
+                        heroTypeCount.TryGetValue(c.type2, out cCount);
+
+                        cCount++;
+
+                        heroTypeCount[c.type2] = cCount;
+                    }
+                    else
+                    {
+                        heroTypeCount.Add(c.type2, 1);
+                    }
+
+                }
+            }
+        }
+
+        activeBonusList = new List<HeroBonus>();
+
+        foreach (KeyValuePair<HeroType, int> m in heroTypeCount)
+        {
+            HeroBonus heroBonus = m.Key.heroBonus;
+
+            //have enough champions to get bonus
+            if (m.Value >= heroBonus.heroCount)
+            {
+                activeBonusList.Add(heroBonus);
+            }
+        }
+
+    }
+
+
+    //重启游戏
+    public void RestartGame()
+    {
+        for (int i = 0; i < ownHeroInventoryArray.Length; i++)
+        {
+            if (ownHeroInventoryArray[i] != null)
+            {
+                //get character
+                HeroController heroController = ownHeroInventoryArray[i].GetComponent<HeroController>();
+
+                Destroy(heroController.gameObject);
+                ownHeroInventoryArray[i] = null;
+            }
+
+        }
+
+        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        {
+            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+            {
+                //there is a champion
+                if (gridHerosArray[x, z] != null)
+                {
+                    //get character
+                    HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
+
+                    Destroy(heroController.gameObject);
+                    gridHerosArray[x, z] = null;
+                }
+
+            }
+        }
+
+        //reset stats
+        currentHP = 100;
+        currentGold = 5;
+        currentGameStage = GameStage.Preparation;
+        currentLevel = 3;
+        currentHeroCount = GetHeroCountOnHexGrid();
+
+        uI.UpdateUI();
+
+        //restart ai
+        aIOpponent.Restart();
+
+        //show hide ui
+        uI.ShowGameScreen();
+
+
+    }
 }

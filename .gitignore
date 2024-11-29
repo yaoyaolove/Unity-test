@@ -1,3 +1,6 @@
 Library
 .vs
 Temp
+Assembly
+Logs\
+Assembly-CSharp.csproj

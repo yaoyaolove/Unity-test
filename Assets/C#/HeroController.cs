@@ -1,3 +1,11 @@
+// =============================================================================
+// 文件名称: HeroController.cs
+// 作者: 刘垚
+// 创建日期: 2024.11.18
+// 更新日期：2024.11.24
+// 使用的设计模式：
+// 备注：
+// =============================================================================
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,6 +17,7 @@ public class HeroController : MonoBehaviour
     public static int TEAMID_AI = 1;
 
     public GameObject levelupEffectPrefab;
+    public GameObject projectileStart;
 
     [HideInInspector]
     public int gridType = 0;
@@ -41,9 +50,9 @@ public class HeroController : MonoBehaviour
     private AIOpponent aIOpponent;
     private HeroAnimation heroAnimation;
     private GameObject target;
+    private WorldCanvasController worldCanvasController;
 
-    
-    
+
     //NavMeshAgent 是 Unity 中用于实现智能寻路和导航的一个组件
     private NavMeshAgent navMeshAgent;
 
@@ -72,7 +81,7 @@ public class HeroController : MonoBehaviour
     private bool isStuned = false;
     private float stunTimer = 0;
 
-
+    private List<Effect> effects;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -165,6 +174,25 @@ public class HeroController : MonoBehaviour
                 }
             }
         }
+
+        if (isStuned)
+        {
+            stunTimer -= Time.deltaTime;
+
+            if (stunTimer < 0)
+            {
+                isStuned = false;
+
+                heroAnimation.IsAnimated(true);
+
+                if (target != null)
+                {
+                    navMeshAgent.destination = target.transform.position;
+
+                    navMeshAgent.isStopped = false;
+                }
+            }
+        }
     }
 
     public void Init(Hero _hero,int _teamID)
@@ -176,7 +204,9 @@ public class HeroController : MonoBehaviour
         map = GameObject.Find("Scripts").GetComponent<MyMap>();
         gameManager = GameObject.Find("Scripts").GetComponent<GameManager>();
         aIOpponent = GameObject.Find("Scripts").GetComponent<AIOpponent>();
+        worldCanvasController = GameObject.Find("Scripts").GetComponent<WorldCanvasController>();
         navMeshAgent = this.GetComponent<NavMeshAgent>();
+        heroAnimation = this.GetComponent<HeroAnimation>();
 
         //disable agent
         navMeshAgent.enabled = false;
@@ -185,12 +215,36 @@ public class HeroController : MonoBehaviour
         maxHealth = hero.health;
         currentHealth = hero.health;
         currentDamage = hero.damage;
+
+        worldCanvasController.AddHealthBar(this.gameObject);
+
+        effects = new List<Effect>();
     }
 
     //在战斗结束后对英雄进行重置
     public void Reset()
     {
-        
+        this.gameObject.SetActive(true);
+
+        //重设状态
+        maxHealth = hero.health * lvl;
+        currentHealth = hero.health * lvl;
+        isDead = false;
+        isInCombat = false;
+        target = null;
+        isAttacking = false;
+
+        //重设位置
+        SetWorldPosition();
+        SetWorldRotation();
+
+        //去除所有影响
+        foreach (Effect e in effects)
+        {
+            e.Remove();
+        }
+
+        effects = new List<Effect>();
     }
 
     //设置英雄的网格坐标
@@ -375,8 +429,6 @@ public class HeroController : MonoBehaviour
             isInCombat = true;
 
             navMeshAgent.enabled = true;
-            Debug.Log(hero.uIName);
-            Debug.Log(navMeshAgent.enabled);
 
             TryAttackNewTarget();
         }
@@ -390,11 +442,65 @@ public class HeroController : MonoBehaviour
         //停止自动寻路
         navMeshAgent.isStopped = true;
 
+        heroAnimation.DoAttack(true);
+    }
+
+    //在攻击动作结束后调用
+    public void OnAttackAnimationFinished()
+    {
+        isAttacking = false;
+
+        if (target != null)
+        {
+            //得到敌人的英雄控制器
+            HeroController targetHero = target.GetComponent<HeroController>();
+
+            List<HeroBonus> activeBonuses = null;
+
+            if (teamID == TEAMID_PLAYER)
+                activeBonuses = gameManager.activeBonusList;
+            else if (teamID == TEAMID_AI)
+                activeBonuses = aIOpponent.activeBonusList;
+
+
+            float d = 0;
+            foreach (HeroBonus b in activeBonuses)
+            {
+                d += b.ApplyOnAttack(this, targetHero);
+            }
+
+            //敌人收到伤害
+            bool isTargetDead = targetHero.OnGotHit(d+currentDamage);
+
+            //如果敌人死了就尝试攻击下一个目标
+            if (isTargetDead)
+                TryAttackNewTarget();
+
+            //如果有投射物则建立投射物
+            if (hero.attackProjectile != null && projectileStart != null)
+            {
+                GameObject projectile = Instantiate(hero.attackProjectile);
+                projectile.transform.position = projectileStart.transform.position;
+                projectile.GetComponent<Projectile>().Init(target);
+            }
+        }
     }
 
     //受到攻击函数
     public bool OnGotHit(float damage)
     {
+        List<HeroBonus> activeBonuses = null;
+
+        if (teamID == TEAMID_PLAYER)
+            activeBonuses = gameManager.activeBonusList;
+        else if (teamID == TEAMID_AI)
+            activeBonuses = aIOpponent.activeBonusList;
+
+        foreach (HeroBonus b in activeBonuses)
+        {
+            damage = b.ApplyOnGotHit(this, damage);
+        }
+
         currentHealth -= damage;
 
         //死亡
@@ -407,6 +513,60 @@ public class HeroController : MonoBehaviour
             aIOpponent.OnHeroDeath();
             gameManager.OnHeroDeath();
         }
+
+        worldCanvasController.AddDamageText(this.transform.position + new Vector3(0, 2.5f, 0), damage);
+
         return isDead;
+    }
+
+    //当英雄被眩晕时调用
+    public void OnGotStun(float duration)
+    {
+        isStuned = true;
+        stunTimer = duration;
+
+        heroAnimation.IsAnimated(false);
+
+        navMeshAgent.isStopped = true;
+    }
+
+    //当英雄被治疗后调用
+    public void OnGotHeal(float f)
+    {
+        currentHealth += f;
+    }
+
+    //给英雄添加影响
+    public void AddEffect(GameObject effectPrefab, float duration)
+    {
+        if (effectPrefab == null)
+            return;
+
+        //look for effect
+        bool foundEffect = false;
+        foreach (Effect e in effects)
+        {
+            if (effectPrefab == e.effectPrefab)
+            {
+                e.duration = duration;
+                foundEffect = true;
+            }
+        }
+
+        //not found effect
+        if (foundEffect == false)
+        {
+            Effect effect = this.gameObject.AddComponent<Effect>();
+            effect.Init(effectPrefab, this.gameObject, duration);
+            effects.Add(effect);
+        }
+
+    }
+
+    //去除英雄所有影响
+    public void RemoveEffect(Effect effect)
+    {
+        effects.Remove(effect);
+        effect.Remove();
     }
 }

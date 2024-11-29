@@ -6844,6 +6844,7 @@ GameObject:
   - component: {fileID: 6619147471966085889}
   - component: {fileID: -2873409931474389368}
   - component: {fileID: 6506743025712216590}
+  - component: {fileID: -4131214292061306474}
   m_Layer: 0
   m_Name: Frost Archer
   m_TagString: Untagged
@@ -6901,6 +6902,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
+    type: 3}
+  projectileStart: {fileID: 6619147471966085893}
   gridType: 0
   gridPositionX: 0
   gridPositionZ: 0
@@ -6909,6 +6913,21 @@ MonoBehaviour:
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0
+  lvl: 1
+  isAttacking: 0
+  isDead: 0
+--- !u!114 &-4131214292061306474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6619147471966085893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdc45204ddc6bc44b92c08945d58e168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6646683676287553282
 GameObject:
   m_ObjectHideFlags: 0

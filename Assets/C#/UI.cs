@@ -6,23 +6,30 @@
 // 使用的设计模式：
 // 备注：所有的UI接口，这里命名之后需要更改
 // =============================================================================
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
-    public Shop shop;
+    public Shop heroShop;
     public GameManager gameManager;
 
     public GameObject[] herosFrameArray;
+    public GameObject[] bonusPanels;
 
     public Text timerText;
     public Text heroCountText;
     public Text goldText;
     public Text hpText;
 
+    public GameObject shop;
+    public GameObject restartButton;
+    public GameObject gold;
     public GameObject placementText;
+    public GameObject bonusContainer;
+    public GameObject bonusUIPrefab;
 
     //UI接口，点击英雄卡片时调用，这里命名还需要进行规范
     public void HeroFrameUI()
@@ -35,26 +42,26 @@ public class UI : MonoBehaviour
         int heroFrameIndex = int.Parse(name.Substring(defaultName.Length, 1));
 
         //调用商店类的方法
-        shop.BuyHero(heroFrameIndex);
+        heroShop.BuyHero(heroFrameIndex);
     }
 
 
     //UI接口，点击更新商店时调用
     public void RefreshUI()
     {
-        shop.RefreshShop(false);
+        heroShop.RefreshShop(false);
     }
 
     //UI接口，点击购买经验时调用
     public void BuyXPUI()
     {
-        shop.BuyLevel();
+        heroShop.BuyLevel();
     }
 
     //UI接口，点击重新开始游戏时调用
     public void RestartUI()
     {
-
+        gameManager.RestartGame();
     }
 
     //方法，隐藏英雄卡片时调用，命名还需规范
@@ -100,7 +107,35 @@ public class UI : MonoBehaviour
     //需要的时候更新UI界面
     public void UpdateUI()
     {
+        goldText.text = gameManager.currentGold.ToString();
+        heroCountText.text = gameManager.currentHeroCount.ToString() + " / " + gameManager.currentLevel.ToString();
+        hpText.text = "HP " + gameManager.currentHP.ToString();
 
+        //hide bonusus UI
+        foreach (GameObject go in bonusPanels)
+        {
+            go.SetActive(false);
+        }
+
+        //if not null
+        if (gameManager.heroTypeCount != null)
+        {
+            int i = 0;
+            //iterate bonuses
+            foreach (KeyValuePair<HeroType, int> m in gameManager.heroTypeCount)
+            {
+                //Now you can access the key and value both separately from this attachStat as:
+                GameObject bonusUI = bonusPanels[i];
+                bonusUI.transform.SetParent(bonusContainer.transform);
+                bonusUI.transform.Find("icon").GetComponent<Image>().sprite = m.Key.icon;
+                bonusUI.transform.Find("name").GetComponent<Text>().text = m.Key.displayName;
+                bonusUI.transform.Find("count").GetComponent<Text>().text = m.Value.ToString() + " / " + m.Key.heroBonus.heroCount.ToString();
+
+                bonusUI.SetActive(true);
+
+                i++;
+            }
+        }
     }
 
     //更新计时器
@@ -121,12 +156,20 @@ public class UI : MonoBehaviour
     //游戏结束时画面
     public void ShowLossScreen()
     {
+        SetTimerTextActive(false);
+        shop.SetActive(false);
+        gold.SetActive(false);
 
+        restartButton.SetActive(true);
     }
 
     //游戏开始时显示游戏界面
     public void ShowGameScreen()
     {
+        SetTimerTextActive(true);
+        shop.SetActive(true);
+        gold.SetActive(true);
 
+        restartButton.SetActive(false);
     }
 }

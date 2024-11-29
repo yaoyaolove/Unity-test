@@ -8408,6 +8408,7 @@ GameObject:
   - component: {fileID: 8687533809271181732}
   - component: {fileID: 479993505071237303}
   - component: {fileID: 4607397951157783002}
+  - component: {fileID: -2739419572767130329}
   m_Layer: 0
   m_Name: Nature knight
   m_TagString: Untagged
@@ -8465,6 +8466,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
+    type: 3}
   gridType: 0
   gridPositionX: 0
   gridPositionZ: 0
@@ -8473,6 +8476,21 @@ MonoBehaviour:
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0
+  lvl: 1
+  isAttacking: 0
+  isDead: 0
+--- !u!114 &-2739419572767130329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687533809271181728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdc45204ddc6bc44b92c08945d58e168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8733652699014583910
 GameObject:
   m_ObjectHideFlags: 0
