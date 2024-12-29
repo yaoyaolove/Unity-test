@@ -31,7 +31,7 @@ public class HeroController : MonoBehaviour
     public int teamID = 0;
 
     [HideInInspector]
-    public Hero hero;
+    public IHero hero;
 
     [HideInInspector]
     public float maxHealth = 0;
@@ -46,7 +46,6 @@ public class HeroController : MonoBehaviour
     public int lvl = 1;
 
     private MyMap map;
-    private GameManager gameManager;
     private AIOpponent aIOpponent;
     private HeroAnimation heroAnimation;
     private GameObject target;
@@ -111,7 +110,7 @@ public class HeroController : MonoBehaviour
         //这一段没看懂在干啥
         else
         {
-            if (gameManager.currentGameStage == GameStage.Preparation)
+            if (GameManager.Instance.currentGameStage == GameStage.Preparation)
             {
                 //calc distance
                 float distance = Vector3.Distance(gridTargetPosition, this.transform.position);
@@ -162,7 +161,7 @@ public class HeroController : MonoBehaviour
                         //计算距离
                         float distance = Vector3.Distance(this.transform.position, target.transform.position);
  
-                        if (distance < hero.attackRange)
+                        if (distance < hero.AttackRange)
                         {
                             DoAttack();
                         }
@@ -195,14 +194,14 @@ public class HeroController : MonoBehaviour
         }
     }
 
-    public void Init(Hero _hero,int _teamID)
+    //初始化函数
+    public void Init(int heroIndex,int _teamID)
     {
-        hero = _hero;
+        hero = GameManager.Instance.gameHeroData.herosArray[heroIndex];
         teamID = _teamID;
 
         //store scripts
         map = GameObject.Find("Scripts").GetComponent<MyMap>();
-        gameManager = GameObject.Find("Scripts").GetComponent<GameManager>();
         aIOpponent = GameObject.Find("Scripts").GetComponent<AIOpponent>();
         worldCanvasController = GameObject.Find("Scripts").GetComponent<WorldCanvasController>();
         navMeshAgent = this.GetComponent<NavMeshAgent>();
@@ -212,9 +211,9 @@ public class HeroController : MonoBehaviour
         navMeshAgent.enabled = false;
 
         //set stats
-        maxHealth = hero.health;
-        currentHealth = hero.health;
-        currentDamage = hero.damage;
+        maxHealth = hero.Health;
+        currentHealth = hero.Health;
+        currentDamage = hero.Damage;
 
         worldCanvasController.AddHealthBar(this.gameObject);
 
@@ -227,8 +226,8 @@ public class HeroController : MonoBehaviour
         this.gameObject.SetActive(true);
 
         //重设状态
-        maxHealth = hero.health * lvl;
-        currentHealth = hero.health * lvl;
+        maxHealth = hero.Health * lvl;
+        currentHealth = hero.Health * lvl;
         isDead = false;
         isInCombat = false;
         target = null;
@@ -310,24 +309,24 @@ public class HeroController : MonoBehaviour
         lvl++;
 
         float newSize = 1;
-        maxHealth=hero.health;
-        currentHealth=hero.health;
+        maxHealth=hero.Health;
+        currentHealth=hero.Health;
 
         if (lvl == 2)
         {
             newSize = 1.5f;
-            maxHealth = hero.health * 2;
-            currentHealth = hero.health * 2;
-            currentDamage = hero.damage * 2;
+            maxHealth = hero.Health * 2;
+            currentHealth = hero.Health * 2;
+            currentDamage = hero.Damage * 2;
 
         }
 
         if (lvl == 3)
         {
             newSize = 2f;
-            maxHealth = hero.health * 3;
-            currentHealth = hero.health * 3;
-            currentDamage = hero.damage * 3;
+            maxHealth = hero.Health * 3;
+            currentHealth = hero.Health * 3;
+            currentDamage = hero.Damage * 3;
         }
 
         //设置大小
@@ -381,18 +380,18 @@ public class HeroController : MonoBehaviour
             {
                 for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
                 {
-                    if (gameManager.gridHerosArray[x, z] != null)
+                    if (GameManager.Instance.gridHerosArray[x, z] != null)
                     {
-                        HeroController championController = gameManager.gridHerosArray[x, z].GetComponent<HeroController>();
+                        HeroController championController = GameManager.Instance.gridHerosArray[x, z].GetComponent<HeroController>();
 
                         if (championController.isDead == false)
                         {
-                            float distance = Vector3.Distance(this.transform.position, gameManager.gridHerosArray[x, z].transform.position);
+                            float distance = Vector3.Distance(this.transform.position, GameManager.Instance.gridHerosArray[x, z].transform.position);
 
                             if (distance < bestDistance)
                             {
                                 bestDistance = distance;
-                                closestEnemy = gameManager.gridHerosArray[x, z];
+                                closestEnemy = GameManager.Instance.gridHerosArray[x, z];
                             }
                         }
                     }
@@ -458,7 +457,7 @@ public class HeroController : MonoBehaviour
             List<HeroBonus> activeBonuses = null;
 
             if (teamID == TEAMID_PLAYER)
-                activeBonuses = gameManager.activeBonusList;
+                activeBonuses = GameManager.Instance.activeBonusList;
             else if (teamID == TEAMID_AI)
                 activeBonuses = aIOpponent.activeBonusList;
 
@@ -477,9 +476,9 @@ public class HeroController : MonoBehaviour
                 TryAttackNewTarget();
 
             //如果有投射物则建立投射物
-            if (hero.attackProjectile != null && projectileStart != null)
+            if (hero.AttackProjectile != null && projectileStart != null)
             {
-                GameObject projectile = Instantiate(hero.attackProjectile);
+                GameObject projectile = Instantiate(hero.AttackProjectile);
                 projectile.transform.position = projectileStart.transform.position;
                 projectile.GetComponent<Projectile>().Init(target);
             }
@@ -492,7 +491,7 @@ public class HeroController : MonoBehaviour
         List<HeroBonus> activeBonuses = null;
 
         if (teamID == TEAMID_PLAYER)
-            activeBonuses = gameManager.activeBonusList;
+            activeBonuses = GameManager.Instance.activeBonusList;
         else if (teamID == TEAMID_AI)
             activeBonuses = aIOpponent.activeBonusList;
 
@@ -511,7 +510,7 @@ public class HeroController : MonoBehaviour
 
             //每有一个英雄阵亡都要判断是否有一方所有英雄均死亡
             aIOpponent.OnHeroDeath();
-            gameManager.OnHeroDeath();
+            GameManager.Instance.OnHeroDeath();
         }
 
         worldCanvasController.AddDamageText(this.transform.position + new Vector3(0, 2.5f, 0), damage);
@@ -568,5 +567,10 @@ public class HeroController : MonoBehaviour
     {
         effects.Remove(effect);
         effect.Remove();
+    }
+
+    public void Skill()
+    {
+        hero.Skill();
     }
 }

@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b760edd71ad9441a65a0496561c94c, type: 3}
+  m_Script: {fileID: 11500000, guid: f16dbf59a34c42940a8706fcc2858d81, type: 3}
   m_Name: Nature Wizard
   m_EditorClassIdentifier: 
   prefab: {fileID: 6285827556954042335, guid: a0747b0ddae085443a2a2f1f7004f221, type: 3}
@@ -17,8 +17,8 @@ MonoBehaviour:
     type: 3}
   uIName: Nature Wizard
   cost: 3
-  type1: {fileID: 11400000, guid: 6bff286b0d56ebf4383d6502102d10dc, type: 2}
-  type2: {fileID: 11400000, guid: f13588daa26fabf4abd3703e0271f0e9, type: 2}
+  type1: {fileID: 11400000, guid: f13588daa26fabf4abd3703e0271f0e9, type: 2}
+  type2: {fileID: 11400000, guid: 6bff286b0d56ebf4383d6502102d10dc, type: 2}
   health: 150
   damage: 20
   attackRange: 10

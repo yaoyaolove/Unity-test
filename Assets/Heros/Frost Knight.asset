@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b760edd71ad9441a65a0496561c94c, type: 3}
+  m_Script: {fileID: 11500000, guid: 15d6e499d4725e942bdfbfb388bbdc2f, type: 3}
   m_Name: Frost Knight
   m_EditorClassIdentifier: 
   prefab: {fileID: 8630654999615776707, guid: 43c0dbeff2d1efe48995fbcc4bb88207, type: 3}
   attackProjectile: {fileID: 0}
   uIName: Frost Knight
   cost: 3
-  type1: {fileID: 11400000, guid: 768050a7074c90b4ba9a3bc8d349898b, type: 2}
-  type2: {fileID: 11400000, guid: b26a0d6278ab8144ca64fd4409f8e9f8, type: 2}
+  type1: {fileID: 11400000, guid: b26a0d6278ab8144ca64fd4409f8e9f8, type: 2}
+  type2: {fileID: 11400000, guid: 768050a7074c90b4ba9a3bc8d349898b, type: 2}
   health: 300
   damage: 10
   attackRange: 2

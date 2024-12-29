@@ -16,8 +16,23 @@ public enum GameStage { Preparation, Combat, Loss };
 public class GameManager : MonoBehaviour
 {
     //单例模式维护的静态变量
-    //private static GameManager instance;
+    public static GameManager Instance;
 
+    // 在Awake中确保只存在一个实例
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;  // 设置单例实例
+            DontDestroyOnLoad(gameObject);  // 保证在场景切换时不销毁
+        }
+        else
+        {
+            Destroy(gameObject);  // 防止其他实例创建
+        }
+    }
+
+    public readonly int HeroCounts = 9;
     public MyMap map;
     public UI uI;
     public InputController inputController;
@@ -204,8 +219,10 @@ public class GameManager : MonoBehaviour
 
 
     //从商店购买英雄的具体实现
-    public bool BuyHeroFromShop(Hero hero)
+    public bool BuyHeroFromShop(int heroIndex)
     {
+        IHero hero=gameHeroData.herosArray[heroIndex];
+        GameObject prefab = gameHeroData.prefabs[heroIndex];
         //得到第一个空的备战席位置
         int emptyIndex = -1;
         for (int i = 0; i < ownHeroInventoryArray.Length; i++)
@@ -222,17 +239,17 @@ public class GameManager : MonoBehaviour
             return false;
 
         //如果钱不够
-        if (currentGold<hero.cost)
+        if (currentGold<hero.Cost)
             return false;
         
         //实例化一个预制件
-        GameObject heroPrefab = Instantiate(hero.prefab);
+        GameObject heroPrefab = Instantiate(prefab);
 
         //为该游戏对象添加一个英雄控制器的组件
         HeroController heroController = heroPrefab.GetComponent<HeroController>();
 
         //初始化一个英雄控制器
-        heroController.Init(hero, HeroController.TEAMID_PLAYER);
+        heroController.Init(heroIndex, HeroController.TEAMID_PLAYER);
 
         //设置英雄的网格坐标
         heroController.SetGridPosition(MyMap.GRIDTYPE_OWN_INVENTORY, emptyIndex, -1);
@@ -249,7 +266,7 @@ public class GameManager : MonoBehaviour
             TryUpgradeHero(hero); 
 
         //减少金币
-        currentGold -=hero.cost;
+        currentGold -=hero.Cost;
 
         //更新金币数
         uI.UpdateUI();
@@ -258,7 +275,7 @@ public class GameManager : MonoBehaviour
     }
 
     //尝试对英雄进行升级
-    public void TryUpgradeHero(Hero hero)
+    public void TryUpgradeHero(IHero hero)
     {
         //用于统计该类型英雄的一星和二星英雄个数而设置的临时变量
         List<HeroController> heroList_lvl_1 = new List<HeroController>();
@@ -621,34 +638,34 @@ public class GameManager : MonoBehaviour
             {
                 if (gridHerosArray[x, z] != null)
                 {
-                    Hero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
+                    IHero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
 
-                    if (heroTypeCount.ContainsKey(c.type1))
+                    if (heroTypeCount.ContainsKey(c.Type1))
                     {
                         int cCount = 0;
-                        heroTypeCount.TryGetValue(c.type1, out cCount);
+                        heroTypeCount.TryGetValue(c.Type1, out cCount);
 
                         cCount++;
 
-                        heroTypeCount[c.type1] = cCount;
+                        heroTypeCount[c.Type1] = cCount;
                     }
                     else
                     {
-                        heroTypeCount.Add(c.type1, 1);
+                        heroTypeCount.Add(c.Type1, 1);
                     }
 
-                    if (heroTypeCount.ContainsKey(c.type2))
+                    if (heroTypeCount.ContainsKey(c.Type2))
                     {
                         int cCount = 0;
-                        heroTypeCount.TryGetValue(c.type2, out cCount);
+                        heroTypeCount.TryGetValue(c.Type2, out cCount);
 
                         cCount++;
 
-                        heroTypeCount[c.type2] = cCount;
+                        heroTypeCount[c.Type2] = cCount;
                     }
                     else
                     {
-                        heroTypeCount.Add(c.type2, 1);
+                        heroTypeCount.Add(c.Type2, 1);
                     }
 
                 }

@@ -10,7 +10,6 @@ using UnityEngine;
 
 public class InputController : MonoBehaviour
 {
-    public GameManager gameManager;
 
     public MyMap map;
 
@@ -66,12 +65,12 @@ public class InputController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            gameManager.StartDrag();
+            GameManager.Instance.StartDrag();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            gameManager.StopDrag();
+            GameManager.Instance.StopDrag();
         }
 
         mousePosition = Input.mousePosition;

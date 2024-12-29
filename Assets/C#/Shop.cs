@@ -11,19 +11,14 @@ using UnityEngine.InputSystem.XR;
 
 public class Shop : MonoBehaviour
 {
-    private HeroFactoryManager factoryManager;
-
-    public GameManager gameManager;
     public UI uI;
-    public GameHeroData gameHeroData;
 
     //存储能购买的英雄列表
-    private Hero[] availableHeroArray;
+    private int[] availableHeroArray;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        factoryManager = new HeroFactoryManager();
         RefreshShop(true);
     }
 
@@ -36,25 +31,25 @@ public class Shop : MonoBehaviour
     //刷新商店
     public void RefreshShop(bool isFree)
     {
-        if (gameManager.currentGold < 2 && isFree == false)
+        if (GameManager.Instance.currentGold < 2 && isFree == false)
             return;
 
         //初始化数组
-        availableHeroArray = new Hero[5];
+        availableHeroArray = new int[5];
 
         for (int i = 0; i < availableHeroArray.Length; i++)
         {
-            Hero hero = GetRandomHeroInfo();
+            int heroIndex = GetRandomHeroIndex();
 
-            availableHeroArray[i] = hero;
+            availableHeroArray[i] = heroIndex;
 
-            uI.LoadShopItem(hero, i);
+            uI.LoadShopItem(heroIndex, i);
 
             uI.ShowHeroFrames();
         }
 
         if (isFree == false)
-            gameManager.currentGold -= 2;
+            GameManager.Instance.currentGold -= 2;
 
         uI.UpdateUI();
     }
@@ -62,7 +57,7 @@ public class Shop : MonoBehaviour
     //购买英雄
     public void BuyHero(int index)
     {
-        bool isSuccess = gameManager.BuyHeroFromShop(availableHeroArray[index]);
+        bool isSuccess = GameManager.Instance.BuyHeroFromShop(index);
         if (isSuccess)
         {
             uI.HideHeroFrame(index);
@@ -72,16 +67,11 @@ public class Shop : MonoBehaviour
     //购买经验升级UI
     public void BuyLevel()
     {
-        gameManager.BuyLevelFromShop();
+        GameManager.Instance.BuyLevelFromShop();
     }
 
-    //随机生成英雄信息
-    public Hero GetRandomHeroInfo()
+    public int GetRandomHeroIndex()
     {
-        //生成一个随机数
-        int rand = Random.Range(0, gameHeroData.herosArray.Length);
-
-        //返回一个随机英雄
-        return gameHeroData.herosArray[rand];
+        return Random.Range(0, GameManager.Instance.HeroCounts);
     }
 }

@@ -4,16 +4,13 @@
 // 创建日期: 2024.11.18
 // 更新日期：2024.12.11
 // 使用的设计模式：
-// 备注：12.11update 加入了InterHero接口
+// 备注：12.11update 加入了IHero接口
 // =============================================================================
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Hero", menuName = "Scriptable Objects/Hero")]
-public class Hero : ScriptableObject, InterHero
+public abstract class Hero : ScriptableObject, IHero
 {
-    // 英雄的预制体（Prefab），用于在游戏中实例化该英雄对象
-    public GameObject prefab;
-
     // 英雄发射的攻击投掷物
     public GameObject attackProjectile;
 
@@ -38,9 +35,11 @@ public class Hero : ScriptableObject, InterHero
     // 英雄的攻击范围，决定其能够攻击的最大距离
     public float attackRange;
 
-    // 获取英雄的预制体（Prefab）
-    public GameObject Prefab => prefab;
-
+    public GameObject AttackProjectile
+    {
+        get => attackProjectile;
+        set => attackProjectile = value;
+    }
     // 获取英雄的UI名称
     public string UIName => uIName;
 
@@ -61,5 +60,7 @@ public class Hero : ScriptableObject, InterHero
 
     // 获取英雄的攻击范围
     public float AttackRange => attackRange;
+
+    public abstract void Skill();
 }
 

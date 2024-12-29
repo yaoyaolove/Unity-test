@@ -13,7 +13,6 @@ public class AIOpponent : MonoBehaviour
 {
     public Shop shop;
     public MyMap map;
-    public GameManager gameManager;
 
     //棋盘英雄数组，这里只存AI的英雄
     public GameObject[,] gridHerosArray;
@@ -79,7 +78,7 @@ public class AIOpponent : MonoBehaviour
             }
 
             //玩家收到伤害
-            gameManager.TakeDamage(damage);
+            GameManager.Instance.TakeDamage(damage);
 
             ResetHeros();
 
@@ -109,23 +108,22 @@ public class AIOpponent : MonoBehaviour
 
     public void AddRandomHero()
     {
-        int indexX;
-        int indexZ;
-        GetEmptySlot(out indexX, out indexZ);
+        GetEmptySlot(out int indexX, out int indexZ);
 
         //如果没有空位置就不再添加英雄
         if (indexX == -1 || indexZ == -1)
             return;
 
-        Hero hero = shop.GetRandomHeroInfo();
+        int heroIndex = shop.GetRandomHeroIndex();
+        IHero hero=GameManager.Instance.gameHeroData.herosArray[heroIndex];
 
-        GameObject heroPrefab = Instantiate(hero.prefab);
+        GameObject heroPrefab = Instantiate(GameManager.Instance.gameHeroData.prefabs[heroIndex]);
 
         gridHerosArray[indexX, indexZ] = heroPrefab;
 
         HeroController heroController = heroPrefab.GetComponent<HeroController>();
 
-        heroController.Init(hero, HeroController.TEAMID_AI);
+        heroController.Init(heroIndex, HeroController.TEAMID_AI);
 
         heroController.SetGridPosition(MyMap.GRIDTYPE_HEXA_MAP, indexX, indexZ + 4);
 
@@ -179,7 +177,7 @@ public class AIOpponent : MonoBehaviour
         bool allDead = IsAllHeroDead();
 
         if (allDead)
-            gameManager.EndRound();
+            GameManager.Instance.EndRound();
     }
 
     private bool IsAllHeroDead()
@@ -236,34 +234,34 @@ public class AIOpponent : MonoBehaviour
             {
                 if (gridHerosArray[x, z] != null)
                 {
-                    Hero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
+                    IHero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
 
-                    if (heroTypeCount.ContainsKey(c.type1))
+                    if (heroTypeCount.ContainsKey(c.Type1))
                     {
                         int cCount = 0;
-                        heroTypeCount.TryGetValue(c.type1, out cCount);
+                        heroTypeCount.TryGetValue(c.Type1, out cCount);
 
                         cCount++;
 
-                        heroTypeCount[c.type1] = cCount;
+                        heroTypeCount[c.Type1] = cCount;
                     }
                     else
                     {
-                        heroTypeCount.Add(c.type1, 1);
+                        heroTypeCount.Add(c.Type1, 1);
                     }
 
-                    if (heroTypeCount.ContainsKey(c.type2))
+                    if (heroTypeCount.ContainsKey(c.Type2))
                     {
                         int cCount = 0;
-                        heroTypeCount.TryGetValue(c.type2, out cCount);
+                        heroTypeCount.TryGetValue(c.Type2, out cCount);
 
                         cCount++;
 
-                        heroTypeCount[c.type2] = cCount;
+                        heroTypeCount[c.Type2] = cCount;
                     }
                     else
                     {
-                        heroTypeCount.Add(c.type2, 1);
+                        heroTypeCount.Add(c.Type2, 1);
                     }
 
                 }

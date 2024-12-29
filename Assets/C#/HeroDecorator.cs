@@ -9,32 +9,37 @@
 using UnityEngine;
 
 // Hero 装饰器基类
-public abstract class HeroDecorator : InterHero
+public abstract class HeroDecorator : IHero
 {
-	protected InterHero _hero;
+	protected IHero _hero;
 
-	// 构造函数，接收一个 InterHero 实例
-	public HeroDecorator(InterHero hero)
+	// 构造函数，接收一个 IHero 实例
+	public HeroDecorator(IHero hero)
 	{
 		_hero = hero;
 	}
 
-	// 重写 InterHero 接口的方法，这些方法实际上会调用 _hero 的相应方法
-	public virtual GameObject Prefab => _hero.Prefab;
-	public virtual string UIName => _hero.UIName;
+    public GameObject AttackProjectile
+    {
+        get => _hero.AttackProjectile;
+        set => _hero.AttackProjectile = value;
+    }
+    public virtual string UIName => _hero.UIName;
 	public virtual int Cost => _hero.Cost;
 	public virtual HeroType Type1 => _hero.Type1;
 	public virtual HeroType Type2 => _hero.Type2;
 	public virtual float Health => _hero.Health;
 	public virtual float Damage => _hero.Damage;
 	public virtual float AttackRange => _hero.AttackRange;
+    public virtual void Skill() => _hero.Skill();
+
 }
 
 // DamageBoostDecorator 类，增加英雄伤害的装饰器
 public class DamageBoostDecorator : HeroDecorator
 {
 	private float _additionalDamage;  
-	public DamageBoostDecorator(InterHero hero, float additionalDamage) : base(hero)
+	public DamageBoostDecorator(IHero hero, float additionalDamage) : base(hero)
 	{
 		_additionalDamage = additionalDamage;
 	}
@@ -45,7 +50,7 @@ public class DamageBoostDecorator : HeroDecorator
 public class AttackRangeBoostDecorator : HeroDecorator
 {
 	private float _additionalRange; 
-	public AttackRangeBoostDecorator(InterHero hero, float additionalRange) : base(hero)
+	public AttackRangeBoostDecorator(IHero hero, float additionalRange) : base(hero)
 	{
 		_additionalRange = additionalRange;
 	}
@@ -56,7 +61,7 @@ public class AttackRangeBoostDecorator : HeroDecorator
 public class HealthBoostDecorator : HeroDecorator
 {
 	private float _additionalHealth; 
-	public HealthBoostDecorator(InterHero hero, float additionalHealth) : base(hero)
+	public HealthBoostDecorator(IHero hero, float additionalHealth) : base(hero)
 	{
 		_additionalHealth = additionalHealth;
 	}

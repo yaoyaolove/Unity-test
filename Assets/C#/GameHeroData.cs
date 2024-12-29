@@ -5,6 +5,9 @@ public class GameHeroData : MonoBehaviour
     //存储所有可用的英雄
     public Hero[] herosArray;
 
+    //存储所有英雄的模型
+    public GameObject[] prefabs;
+
     //存储所有可用的英雄类型
     public HeroType[] heroTypesArray;
 }

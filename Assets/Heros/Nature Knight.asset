@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b760edd71ad9441a65a0496561c94c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b84d203ead52e148b7fd36e757e0c85, type: 3}
   m_Name: Nature Knight
   m_EditorClassIdentifier: 
   prefab: {fileID: 8687533809271181728, guid: bf570dce40d2dc44ba0c18697048ea20, type: 3}
   attackProjectile: {fileID: 0}
-  uIName: Nature Knight
-  cost: 3
-  type1: {fileID: 11400000, guid: 768050a7074c90b4ba9a3bc8d349898b, type: 2}
-  type2: {fileID: 11400000, guid: f13588daa26fabf4abd3703e0271f0e9, type: 2}
+  uIName: Nature Kinght
+  cost: 2
+  type1: {fileID: 11400000, guid: f13588daa26fabf4abd3703e0271f0e9, type: 2}
+  type2: {fileID: 11400000, guid: 768050a7074c90b4ba9a3bc8d349898b, type: 2}
   health: 300
   damage: 10
   attackRange: 2
