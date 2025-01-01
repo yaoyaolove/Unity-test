@@ -45,13 +45,14 @@ public class FloatingText : MonoBehaviour
             Destroy(this.gameObject);
     }
 
-    public void Init(Vector3 startPosition, float v)
+    public void Init(Vector3 startPosition, float v, Color color)
     {
         this.transform.position = startPosition;
 
         canvasGroup = this.GetComponent<CanvasGroup>();
 
         this.GetComponent<Text>().text = Mathf.Round(v).ToString();
+        this.GetComponent<Text>().color = color;
 
         moveDirection = new Vector3(Random.Range(-0.5f, 0.5f), 1, Random.Range(-0.5f, 0.5f)).normalized;
     }

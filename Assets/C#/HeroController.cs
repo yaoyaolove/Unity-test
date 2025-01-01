@@ -36,7 +36,7 @@ public class HeroController : MonoBehaviour
     [HideInInspector]
     public float maxHealth = 0;
 
-    [HideInInspector] 
+    [HideInInspector]
     public float currentHealth = 0;
 
     [HideInInspector]
@@ -82,10 +82,13 @@ public class HeroController : MonoBehaviour
 
     private List<Effect> effects;
 
+    private List<string> equipments;
+
+    private IAttackBehavior attackEffect;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -160,7 +163,7 @@ public class HeroController : MonoBehaviour
                     {
                         //计算距离
                         float distance = Vector3.Distance(this.transform.position, target.transform.position);
- 
+
                         if (distance < hero.AttackRange)
                         {
                             DoAttack();
@@ -195,7 +198,7 @@ public class HeroController : MonoBehaviour
     }
 
     //初始化函数
-    public void Init(int heroIndex,int _teamID)
+    public void Init(int heroIndex, int _teamID)
     {
         hero = GameManager.Instance.gameHeroData.herosArray[heroIndex];
         teamID = _teamID;
@@ -218,6 +221,32 @@ public class HeroController : MonoBehaviour
         worldCanvasController.AddHealthBar(this.gameObject);
 
         effects = new List<Effect>();
+
+        equipments = new List<string>();
+        //随机生成装备
+        if (Random.Range(0, 10) < 5)
+        {
+            equipments.Add("Vampire");
+        }
+        if (Random.Range(0, 10) < 5)
+        {
+            equipments.Add("Killer");
+        }
+
+        //用装饰器修饰攻击效果
+        attackEffect = new AttackEffect();
+        foreach (string equipment in equipments)
+        {
+            switch (equipment)
+            {
+                case "Vampire":
+                    attackEffect = new Vampire(attackEffect);
+                    break;
+                case "Killer":
+                    attackEffect = new Killer(attackEffect);
+                    break;
+            }
+        }
     }
 
     //在战斗结束后对英雄进行重置
@@ -309,8 +338,8 @@ public class HeroController : MonoBehaviour
         lvl++;
 
         float newSize = 1;
-        maxHealth=hero.Health;
-        currentHealth=hero.Health;
+        maxHealth = hero.Health;
+        currentHealth = hero.Health;
 
         if (lvl == 2)
         {
@@ -468,8 +497,8 @@ public class HeroController : MonoBehaviour
                 d += b.ApplyOnAttack(this, targetHero);
             }
 
-            //敌人收到伤害
-            bool isTargetDead = targetHero.OnGotHit(d+currentDamage);
+            //伤害效果
+            bool isTargetDead = attackEffect.Attack(targetHero, this, d + currentDamage);
 
             //如果敌人死了就尝试攻击下一个目标
             if (isTargetDead)
@@ -532,6 +561,7 @@ public class HeroController : MonoBehaviour
     //当英雄被治疗后调用
     public void OnGotHeal(float f)
     {
+        worldCanvasController.AddHealText(this.transform.position + new Vector3(0, 2.5f, 0), f);
         currentHealth += f;
     }
 

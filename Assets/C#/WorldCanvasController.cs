@@ -20,7 +20,15 @@ public class WorldCanvasController : MonoBehaviour
         GameObject go = Instantiate(floatingTextPrefab);
         go.transform.SetParent(worldCanvas.transform);
 
-        go.GetComponent<FloatingText>().Init(position, v);
+        go.GetComponent<FloatingText>().Init(position, v, Color.red);
+    }
+
+    public void AddHealText(Vector3 position, float v)
+    {
+        GameObject go = Instantiate(floatingTextPrefab);
+        go.transform.SetParent(worldCanvas.transform);
+
+        go.GetComponent<FloatingText>().Init(position, v, Color.green);
     }
 
     //Ìí¼ÓÑªÌõ
