@@ -407,24 +407,21 @@ public abstract class HeroController : MonoBehaviour
         }
         else if (teamID == TEAMID_AI)
         {
-            for (int x = 0; x < MyMap.hexMapSizeX; x++)
+            GridHeroIterator gridHeroIterator = GameManager.GetInstance().gridHeroIterator;
+            gridHeroIterator.Reset();
+            GameObject gridHero = null;
+            while (gridHero=gridHeroIterator.GetNext())
             {
-                for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+                HeroController championController = gridHero.GetComponent<HeroController>();
+
+                if (championController.isDead == false)
                 {
-                    if (GameManager.GetInstance().gridHerosArray[x, z] != null)
+                    float distance = Vector3.Distance(this.transform.position, gridHero.transform.position);
+
+                    if (distance < bestDistance)
                     {
-                        HeroController championController = GameManager.GetInstance().gridHerosArray[x, z].GetComponent<HeroController>();
-
-                        if (championController.isDead == false)
-                        {
-                            float distance = Vector3.Distance(this.transform.position, GameManager.GetInstance().gridHerosArray[x, z].transform.position);
-
-                            if (distance < bestDistance)
-                            {
-                                bestDistance = distance;
-                                closestEnemy = GameManager.GetInstance().gridHerosArray[x, z];
-                            }
-                        }
+                        bestDistance = distance;
+                        closestEnemy = gridHero;
                     }
                 }
             }

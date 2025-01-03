@@ -3,8 +3,8 @@ using static GameManager;
 
 public class Preparation : IGameStage
 {
-    private GameManager gameManager=GameManager.GetInstance();
-    private int duration=15;
+    private GameManager gameManager = GameManager.GetInstance();
+    private int duration = 15;
 
     public GameStage GetName()
     {
@@ -57,18 +57,14 @@ public class Preparation : IGameStage
         }
 
         //六边形棋盘
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        GridHeroIterator gridHeroIterator = gameManager.gridHeroIterator;
+        gridHeroIterator.Reset();
+        GameObject gridHero = null;
+        while (gridHero = gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-            {
-                if (gameManager.gridHerosArray[x, z] != null)
-                {
-                    HeroController heroController = gameManager.gridHerosArray[x, z].GetComponent<HeroController>();
+            HeroController heroController = gridHero.GetComponent<HeroController>();
 
-                    heroController.OnCombatStart();
-                }
-
-            }
+            heroController.OnCombatStart();
         }
 
 

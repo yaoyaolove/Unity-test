@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
 {
     //单例模式维护的静态变量
     private static GameManager Instance;
-    public static GameManager GetInstance()=> Instance;
+    public static GameManager GetInstance() => Instance;
     // 在Awake中确保只存在一个实例
     private void Awake()
     {
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     public IGameStage gameStage;
     public GameStage currentGameStage;
-    
+
     //用于系统计时的私有临时变量
     private float timer = 0;
 
@@ -61,7 +61,9 @@ public class GameManager : MonoBehaviour
     public GameObject[] oponentHeroInventoryArray;
     //棋盘英雄数组,这里只存玩家的英雄
     [HideInInspector]
-    public GameObject[,] gridHerosArray;
+    public GridHerosArray gridHerosArray;
+    public GridHeroIterator gridHeroIterator;
+    //public GameObject[,] gridHerosArray;
 
     [HideInInspector]
     public int currentLevel = 3;
@@ -87,12 +89,13 @@ public class GameManager : MonoBehaviour
     {
         //设定游戏开始阶段
         gameStage = new Preparation();
-        currentGameStage =GameStage.Preparation;
+        currentGameStage = GameStage.Preparation;
 
         //初始化数组
         ownHeroInventoryArray = new GameObject[MyMap.inventorySize];
         oponentHeroInventoryArray = new GameObject[MyMap.inventorySize];
-        gridHerosArray = new GameObject[MyMap.hexMapSizeX, MyMap.hexMapSizeZ / 2];
+        gridHerosArray = new GridHerosArray();
+        gridHeroIterator = new GridHeroIterator(gridHerosArray);
 
         uI.UpdateUI();
     }
@@ -231,7 +234,7 @@ public class GameManager : MonoBehaviour
     //从商店购买英雄的具体实现
     public bool BuyHeroFromShop(int heroIndex)
     {
-        IHero hero=gameHeroData.herosArray[heroIndex];
+        IHero hero = gameHeroData.herosArray[heroIndex];
         GameObject prefab = gameHeroData.prefabs[heroIndex];
         //得到第一个空的备战席位置
         int emptyIndex = -1;
@@ -249,9 +252,9 @@ public class GameManager : MonoBehaviour
             return false;
 
         //如果钱不够
-        if (currentGold<hero.Cost)
+        if (currentGold < hero.Cost)
             return false;
-        
+
         //实例化一个预制件
         GameObject heroPrefab = Instantiate(prefab);
 
@@ -274,10 +277,10 @@ public class GameManager : MonoBehaviour
 
         //准备阶段尝试进行英雄的升级
         if (currentGameStage == GameStage.Preparation)
-            TryUpgradeHero(hero); 
+            TryUpgradeHero(hero);
 
         //减少金币
-        currentGold -=hero.Cost;
+        currentGold -= hero.Cost;
 
         //更新金币数
         uI.UpdateUI();
@@ -310,23 +313,17 @@ public class GameManager : MonoBehaviour
 
         }
         //计算棋盘上的英雄
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        gridHeroIterator.Reset();
+        GameObject gridHero = null;
+        while (gridHero = gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+            HeroController heroController = gridHero.GetComponent<HeroController>();
+            if (heroController.hero == hero)
             {
-                if (gridHerosArray[x, z] != null)
-                {
-                    HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
-
-                    if (heroController.hero == hero)
-                    {
-                        if (heroController.lvl == 1)
-                            heroList_lvl_1.Add(heroController);
-                        else if (heroController.lvl == 2)
-                            heroList_lvl_2.Add(heroController);
-                    }
-                }
-
+                if (heroController.lvl == 1)
+                    heroList_lvl_1.Add(heroController);
+                else if (heroController.lvl == 2)
+                    heroList_lvl_2.Add(heroController);
             }
         }
 
@@ -374,7 +371,7 @@ public class GameManager : MonoBehaviour
             return;
 
         if (currentLevel < 9)
-        { 
+        {
             currentLevel++;
             currentGold -= 4;
             uI.UpdateUI();
@@ -419,7 +416,7 @@ public class GameManager : MonoBehaviour
         int herosOnField = GetHeroCountOnHexGrid();
 
         //判断是取消拖拽英雄的操作
-        if(draggedHero != null)
+        if (draggedHero != null)
         {
             //将移动状态改回
             draggedHero.GetComponent<HeroController>().IsDragged = false;
@@ -427,7 +424,7 @@ public class GameManager : MonoBehaviour
             TriggerInfo triggerinfo = inputController.triggerInfo;
 
             //判断鼠标落在有效区域
-            if(triggerinfo != null)
+            if (triggerinfo != null)
             {
                 GameObject currentTriggerHero = GetHeroFromTriggerInfo(triggerinfo);
                 //如果拖拽到的位置已经有英雄，就将两个英雄交换位置
@@ -497,7 +494,7 @@ public class GameManager : MonoBehaviour
         }
         else if (triggerinfo.gridType == MyMap.GRIDTYPE_HEXA_MAP)
         {
-            heroGO = gridHerosArray[triggerinfo.gridX, triggerinfo.gridZ];
+            heroGO = gridHerosArray.GetHero(triggerinfo.gridX, triggerinfo.gridZ);
         }
 
         return heroGO;
@@ -515,7 +512,7 @@ public class GameManager : MonoBehaviour
         }
         else if (gridType == MyMap.GRIDTYPE_HEXA_MAP)
         {
-            gridHerosArray[gridX, gridZ] = hero;
+            gridHerosArray.AddHero(hero, gridX, gridZ);
         }
     }
 
@@ -528,7 +525,7 @@ public class GameManager : MonoBehaviour
         }
         else if (gridType == MyMap.GRIDTYPE_HEXA_MAP)
         {
-            gridHerosArray[gridX, gridZ] = null;
+            gridHerosArray.RemoveHero(gridX, gridZ);
         }
     }
 
@@ -536,15 +533,10 @@ public class GameManager : MonoBehaviour
     private int GetHeroCountOnHexGrid()
     {
         int count = 0;
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        gridHeroIterator.Reset();
+        while (gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-            {
-                if (gridHerosArray[x, z] != null)
-                {
-                    count++;
-                }
-            }
+            count++;
         }
         return count;
     }
@@ -552,9 +544,9 @@ public class GameManager : MonoBehaviour
     //当一个英雄死亡时调用
     public void OnHeroDeath()
     {
-        bool allDead=IsAllHeroDead();
+        bool allDead = IsAllHeroDead();
 
-        if(allDead)
+        if (allDead)
             EndRound();
     }
 
@@ -564,22 +556,16 @@ public class GameManager : MonoBehaviour
         int heroCount = 0;
         int heroDead = 0;
 
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        gridHeroIterator.Reset();
+        GameObject gridHero = null;
+        while (gridHero = gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-            {
-                if (gridHerosArray[x, z] != null)
-                {
-                    HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
+            HeroController heroController = gridHero.GetComponent<HeroController>();
 
-                    heroCount++;
+            heroCount++;
 
-                    if (heroController.isDead)
-                        heroDead++;
-
-                }
-
-            }
+            if (heroController.isDead)
+                heroDead++;
         }
 
         if (heroDead == heroCount)
@@ -591,24 +577,19 @@ public class GameManager : MonoBehaviour
     //减少战斗倒计时，加速游戏结束
     public void EndRound()
     {
-        timer = combatStageDuration - 3; 
+        timer = combatStageDuration - 3;
     }
 
     //重置英雄
     public void ResetHeros()
     {
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        gridHeroIterator.Reset();
+        GameObject gridHero = null;
+        while (gridHero = gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-            {
-                if (gridHerosArray[x, z] != null)
-                {
-                    HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
+            HeroController heroController = gridHero.GetComponent<HeroController>();
 
-                    heroController.Reset();
-                }
-
-            }
+            heroController.Reset();
         }
     }
 
@@ -642,46 +623,42 @@ public class GameManager : MonoBehaviour
         //初始化字典
         heroTypeCount = new Dictionary<HeroType, int>();
 
-        //遍历六边形棋盘
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        gridHeroIterator.Reset();
+        GameObject gridHero = null;
+        while (gridHero = gridHeroIterator.GetNext())
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+            IHero c = gridHero.GetComponent<HeroController>().hero;
+
+            if (heroTypeCount.ContainsKey(c.Type1))
             {
-                if (gridHerosArray[x, z] != null)
-                {
-                    IHero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
+                int cCount = 0;
+                heroTypeCount.TryGetValue(c.Type1, out cCount);
 
-                    if (heroTypeCount.ContainsKey(c.Type1))
-                    {
-                        int cCount = 0;
-                        heroTypeCount.TryGetValue(c.Type1, out cCount);
+                cCount++;
 
-                        cCount++;
-
-                        heroTypeCount[c.Type1] = cCount;
-                    }
-                    else
-                    {
-                        heroTypeCount.Add(c.Type1, 1);
-                    }
-
-                    if (heroTypeCount.ContainsKey(c.Type2))
-                    {
-                        int cCount = 0;
-                        heroTypeCount.TryGetValue(c.Type2, out cCount);
-
-                        cCount++;
-
-                        heroTypeCount[c.Type2] = cCount;
-                    }
-                    else
-                    {
-                        heroTypeCount.Add(c.Type2, 1);
-                    }
-
-                }
+                heroTypeCount[c.Type1] = cCount;
             }
+            else
+            {
+                heroTypeCount.Add(c.Type1, 1);
+            }
+
+            if (heroTypeCount.ContainsKey(c.Type2))
+            {
+                int cCount = 0;
+                heroTypeCount.TryGetValue(c.Type2, out cCount);
+
+                cCount++;
+
+                heroTypeCount[c.Type2] = cCount;
+            }
+            else
+            {
+                heroTypeCount.Add(c.Type2, 1);
+            }
+
         }
+        
 
         activeBonusList = new List<HeroBonus>();
 
@@ -715,22 +692,7 @@ public class GameManager : MonoBehaviour
 
         }
 
-        for (int x = 0; x < MyMap.hexMapSizeX; x++)
-        {
-            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-            {
-                //there is a champion
-                if (gridHerosArray[x, z] != null)
-                {
-                    //get character
-                    HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
-
-                    Destroy(heroController.gameObject);
-                    gridHerosArray[x, z] = null;
-                }
-
-            }
-        }
+        gridHerosArray.Clear();
 
         //reset stats
         currentHP = 100;
