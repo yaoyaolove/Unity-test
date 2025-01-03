@@ -7703,7 +7703,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7344935845212841424}
   - component: {fileID: -5580198799757821014}
-  - component: {fileID: 3603868484842981206}
+  - component: {fileID: 5447309388536578880}
   - component: {fileID: 2702138166252737548}
   m_Layer: 0
   m_Name: Fire Knight
@@ -7750,7 +7750,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3603868484842981206
+--- !u!114 &5447309388536578880
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7759,16 +7759,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 7344935845212841428}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: f686b802d0c1c5c4da9aa1c57c9c9421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
     type: 3}
+  projectileStart: {fileID: 0}
   gridType: 0
   gridPositionX: 0
   gridPositionZ: 0
   teamID: 0
-  hero: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0

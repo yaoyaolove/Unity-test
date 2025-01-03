@@ -6843,7 +6843,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6619147471966085889}
   - component: {fileID: -2873409931474389368}
-  - component: {fileID: 6506743025712216590}
+  - component: {fileID: 6815261529052464053}
   - component: {fileID: -4131214292061306474}
   m_Layer: 0
   m_Name: Frost Archer
@@ -6890,7 +6890,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6506743025712216590
+--- !u!114 &6815261529052464053
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6899,7 +6899,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6619147471966085893}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: 6293d6746a53d834bafef7a1bb1ae98b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
@@ -6909,7 +6909,6 @@ MonoBehaviour:
   gridPositionX: 0
   gridPositionZ: 0
   teamID: 0
-  hero: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0

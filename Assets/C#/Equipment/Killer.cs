@@ -8,8 +8,7 @@ public class Killer : AttackDecorator
 
     public override bool Attack(HeroController target, HeroController source, float damage)
     {
-        Debug.Log("Killer Attack");
-        return base.Attack(target, source, damage+5);
+        return base.Attack(target, source, damage)|| base.Attack(target, source, 5);
         
     }
 }

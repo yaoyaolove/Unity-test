@@ -11,13 +11,13 @@ using UnityEngine;
 using UnityEngine.InputSystem.XR;
 
 //游戏阶段
-public enum GameStage { Preparation, Combat, Loss };
 
+public enum GameStage { Preparation, Combat, Loss };
 public class GameManager : MonoBehaviour
 {
     //单例模式维护的静态变量
-    public static GameManager Instance;
-
+    private static GameManager Instance;
+    public static GameManager GetInstance()=> Instance;
     // 在Awake中确保只存在一个实例
     private void Awake()
     {
@@ -40,8 +40,9 @@ public class GameManager : MonoBehaviour
     public Shop shop;
     public AIOpponent aIOpponent;
 
-
+    public IGameStage gameStage;
     public GameStage currentGameStage;
+    
     //用于系统计时的私有临时变量
     private float timer = 0;
 
@@ -85,7 +86,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //设定游戏开始阶段
-        currentGameStage=GameStage.Preparation;
+        gameStage = new Preparation();
+        currentGameStage =GameStage.Preparation;
 
         //初始化数组
         ownHeroInventoryArray = new GameObject[MyMap.inventorySize];
@@ -98,123 +100,131 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (currentGameStage == GameStage.Preparation)
-        {
-            timer += Time.deltaTime;
+        gameStage.Update();
+        //if (currentGameStage == GameStage.Preparation)
+        //{
+        //    timer += Time.deltaTime;
 
-            timerDisplay = (int)(preparationStageDuration - timer);
+        //    timerDisplay = (int)(preparationStageDuration - timer);
 
-            uI.UpdateTimerText();
+        //    uI.UpdateTimerText();
 
-            if (timer > preparationStageDuration)
-            {
-                timer = 0;
+        //    if (timer > preparationStageDuration)
+        //    {
+        //        timer = 0;
 
-                OnGameStageComplete();
-            }
-        }
-        else if (currentGameStage == GameStage.Combat)
-        {
-            timer += Time.deltaTime;
+        //        OnGameStageComplete();
+        //    }
+        //}
+        //else if (currentGameStage == GameStage.Combat)
+        //{
+        //    timer += Time.deltaTime;
 
-            timerDisplay = (int)timer;
+        //    timerDisplay = (int)timer;
 
-            if (timer > combatStageDuration)
-            {
-                timer = 0;
+        //    if (timer > combatStageDuration)
+        //    {
+        //        timer = 0;
 
-                OnGameStageComplete();
-            }
-        }
+        //        OnGameStageComplete();
+        //    }
+        //}
+    }
+
+    public void ChangeStage(IGameStage gameStage)
+    {
+        currentGameStage = gameStage.GetName();
+        this.gameStage = gameStage;
     }
 
     //当游戏阶段结束
-    private void OnGameStageComplete()
+    public void OnGameStageComplete()
     {
         //告知AI阶段完成
         aIOpponent.OnGameStageComplete(currentGameStage);
         //如果准备阶段完成
-        if (currentGameStage == GameStage.Preparation)
-        {
-            //进入战斗阶段
-            currentGameStage = GameStage.Combat;
+        gameStage.OnGameStageComplete();
+        //if (currentGameStage == GameStage.Preparation)
+        //{
+        //    //进入战斗阶段
+        //    currentGameStage = GameStage.Combat;
 
-            //将指示器均隐藏，这是为了防止你在拖拽英雄的过程中准备阶段结束
-            map.HideIndicators();
+        //    //将指示器均隐藏，这是为了防止你在拖拽英雄的过程中准备阶段结束
+        //    map.HideIndicators();
 
-            //计时器隐藏
-            uI.SetTimerTextActive(false);
+        //    //计时器隐藏
+        //    uI.SetTimerTextActive(false);
 
-            if (draggedHero != null)
-            {
-                //这里要记住将英雄拖拽信息更新    
-                draggedHero.GetComponent<HeroController>().IsDragged = false;
-                draggedHero = null;
-            }
+        //    if (draggedHero != null)
+        //    {
+        //        //这里要记住将英雄拖拽信息更新    
+        //        draggedHero.GetComponent<HeroController>().IsDragged = false;
+        //        draggedHero = null;
+        //    }
 
-            //备战席
-            for (int i = 0; i < ownHeroInventoryArray.Length; i++)
-            {
-                if (ownHeroInventoryArray[i] != null)
-                {
-                    HeroController heroController = ownHeroInventoryArray[i].GetComponent<HeroController>();
+        //    //备战席
+        //    for (int i = 0; i < ownHeroInventoryArray.Length; i++)
+        //    {
+        //        if (ownHeroInventoryArray[i] != null)
+        //        {
+        //            HeroController heroController = ownHeroInventoryArray[i].GetComponent<HeroController>();
 
-                    heroController.OnCombatStart();
-                }
-            }
+        //            heroController.OnCombatStart();
+        //        }
+        //    }
 
-            //六边形棋盘
-            for (int x = 0; x < MyMap.hexMapSizeX; x++)
-            {
-                for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-                {
-                    if (gridHerosArray[x, z] != null)
-                    {
-                        HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
+        //    //六边形棋盘
+        //    for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        //    {
+        //        for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+        //        {
+        //            if (gridHerosArray[x, z] != null)
+        //            {
+        //                HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
 
-                        heroController.OnCombatStart();
-                    }
+        //                heroController.OnCombatStart();
+        //            }
 
-                }
-            }
+        //        }
+        //    }
 
 
-            //检查是否没有英雄，会直接判负，回合结束
-            if (IsAllHeroDead())
-                EndRound();
+        //    //检查是否没有英雄，会直接判负，回合结束
+        //    if (IsAllHeroDead())
+        //        EndRound();
 
-        }
-        else if (currentGameStage == GameStage.Combat)
-        {
-            currentGameStage = GameStage.Preparation;
+        //}
+        //else if (currentGameStage == GameStage.Combat)
+        //{
+        //    currentGameStage = GameStage.Preparation;
 
-            uI.SetTimerTextActive(true);
+        //    uI.SetTimerTextActive(true);
 
-            ResetHeros();
+        //    ResetHeros();
 
-            //尝试对可能升级的英雄进行升级
-            for (int i = 0; i < gameHeroData.herosArray.Length; i++)
-            {
-                TryUpgradeHero(gameHeroData.herosArray[i]);
-            }
+        //    //尝试对可能升级的英雄进行升级
+        //    for (int i = 0; i < gameHeroData.herosArray.Length; i++)
+        //    {
+        //        TryUpgradeHero(gameHeroData.herosArray[i]);
+        //    }
 
-            //增加加金币
-            currentGold += CalculateIncome();
+        //    //增加加金币
+        //    currentGold += CalculateIncome();
 
-            //更新UI
-            uI.UpdateUI();
+        //    //更新UI
+        //    uI.UpdateUI();
 
-            //刷新商店
-            shop.RefreshShop(true);
+        //    //刷新商店
+        //    shop.RefreshShop(true);
 
-            //检查是否失败
-            if (currentHP <= 0)
-            {
-                currentGameStage = GameStage.Loss;
-                uI.ShowLossScreen();
-            }
+        //    //检查是否失败
+        //    if (currentHP <= 0)
+        //    {
+        //        currentGameStage = GameStage.Loss;
+        //        uI.ShowLossScreen();
+        //    }
 
-        }
+        //}
     }
 
 
@@ -249,7 +259,8 @@ public class GameManager : MonoBehaviour
         HeroController heroController = heroPrefab.GetComponent<HeroController>();
 
         //初始化一个英雄控制器
-        heroController.Init(heroIndex, HeroController.TEAMID_PLAYER);
+        heroController.CreateHero();
+        heroController.Init(HeroController.TEAMID_PLAYER);
 
         //设置英雄的网格坐标
         heroController.SetGridPosition(MyMap.GRIDTYPE_OWN_INVENTORY, emptyIndex, -1);
@@ -548,7 +559,7 @@ public class GameManager : MonoBehaviour
     }
 
     //判断英雄全部阵亡,英雄死亡但是游戏对象仍存在，所以可以遍历
-    private bool IsAllHeroDead()
+    public bool IsAllHeroDead()
     {
         int heroCount = 0;
         int heroDead = 0;
@@ -584,7 +595,7 @@ public class GameManager : MonoBehaviour
     }
 
     //重置英雄
-    private void ResetHeros()
+    public void ResetHeros()
     {
         for (int x = 0; x < MyMap.hexMapSizeX; x++)
         {
@@ -602,7 +613,7 @@ public class GameManager : MonoBehaviour
     }
 
     //计算增加金币函数
-    private int CalculateIncome()
+    public int CalculateIncome()
     {
         int income = 0;
 
@@ -737,5 +748,35 @@ public class GameManager : MonoBehaviour
         uI.ShowGameScreen();
 
 
+    }
+
+    public void AddToTimer(float time)
+    {
+        timer += time;
+    }
+
+    public void ResetTimer()
+    {
+        timer = 0;
+    }
+
+    public void UpdateTimerDisplayToNow()
+    {
+        timerDisplay = (int)timer;
+    }
+
+    public void UpdateTimerDisplayToRestTime(float totalTime)
+    {
+        timerDisplay = (int)(totalTime - timer);
+    }
+
+    public bool JudgeTimeUp(float time)
+    {
+        return timer > time;
+    }
+
+    public GameObject GetDraggedHero()
+    {
+        return draggedHero;
     }
 }

@@ -1,0 +1,79 @@
+﻿using UnityEngine;
+using static GameManager;
+
+public class Preparation : IGameStage
+{
+    private GameManager gameManager=GameManager.GetInstance();
+    private int duration=15;
+
+    public GameStage GetName()
+    {
+        return GameStage.Preparation;
+    }
+
+    public void Update()
+    {
+        gameManager.AddToTimer(Time.deltaTime);
+
+        gameManager.UpdateTimerDisplayToRestTime(duration);
+
+        gameManager.uI.UpdateTimerText();
+
+        if (gameManager.JudgeTimeUp(duration))
+        {
+            gameManager.ResetTimer();
+
+            gameManager.OnGameStageComplete();
+        }
+    }
+
+    public void OnGameStageComplete()
+    {
+        gameManager.ChangeStage(new Combat());
+
+        //将指示器均隐藏，这是为了防止你在拖拽英雄的过程中准备阶段结束
+        gameManager.map.HideIndicators();
+
+        //计时器隐藏
+        gameManager.uI.SetTimerTextActive(false);
+
+        GameObject draggedHero = gameManager.GetDraggedHero();
+        if (draggedHero != null)
+        {
+            //这里要记住将英雄拖拽信息更新    
+            draggedHero.GetComponent<HeroController>().IsDragged = false;
+            draggedHero = null;
+        }
+
+        //备战席
+        for (int i = 0; i < gameManager.ownHeroInventoryArray.Length; i++)
+        {
+            if (gameManager.ownHeroInventoryArray[i] != null)
+            {
+                HeroController heroController = gameManager.ownHeroInventoryArray[i].GetComponent<HeroController>();
+
+                heroController.OnCombatStart();
+            }
+        }
+
+        //六边形棋盘
+        for (int x = 0; x < MyMap.hexMapSizeX; x++)
+        {
+            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
+            {
+                if (gameManager.gridHerosArray[x, z] != null)
+                {
+                    HeroController heroController = gameManager.gridHerosArray[x, z].GetComponent<HeroController>();
+
+                    heroController.OnCombatStart();
+                }
+
+            }
+        }
+
+
+        //检查是否没有英雄，会直接判负，回合结束
+        if (gameManager.IsAllHeroDead())
+            gameManager.EndRound();
+    }
+}

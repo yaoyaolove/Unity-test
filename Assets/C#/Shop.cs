@@ -31,7 +31,7 @@ public class Shop : MonoBehaviour
     //刷新商店
     public void RefreshShop(bool isFree)
     {
-        if (GameManager.Instance.currentGold < 2 && isFree == false)
+        if (GameManager.GetInstance().currentGold < 2 && isFree == false)
             return;
 
         //初始化数组
@@ -49,7 +49,7 @@ public class Shop : MonoBehaviour
         }
 
         if (isFree == false)
-            GameManager.Instance.currentGold -= 2;
+            GameManager.GetInstance().currentGold -= 2;
 
         uI.UpdateUI();
     }
@@ -58,7 +58,7 @@ public class Shop : MonoBehaviour
     public void BuyHero(int index)
     {
         int heroIndex = availableHeroArray[index];
-        bool isSuccess = GameManager.Instance.BuyHeroFromShop(heroIndex);
+        bool isSuccess = GameManager.GetInstance().BuyHeroFromShop(heroIndex);
         if (isSuccess)
         {
             uI.HideHeroFrame(index);
@@ -68,11 +68,11 @@ public class Shop : MonoBehaviour
     //购买经验升级UI
     public void BuyLevel()
     {
-        GameManager.Instance.BuyLevelFromShop();
+        GameManager.GetInstance().BuyLevelFromShop();
     }
 
     public int GetRandomHeroIndex()
     {
-        return Random.Range(0, GameManager.Instance.HeroCounts);
+        return Random.Range(0, GameManager.GetInstance().HeroCounts);
     }
 }

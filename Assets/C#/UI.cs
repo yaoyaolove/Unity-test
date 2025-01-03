@@ -60,7 +60,7 @@ public class UI : MonoBehaviour
     //UI接口，点击重新开始游戏时调用
     public void RestartUI()
     {
-        GameManager.Instance.RestartGame();
+        GameManager.GetInstance().RestartGame();
     }
 
     //方法，隐藏英雄卡片时调用，命名还需规范
@@ -92,7 +92,7 @@ public class UI : MonoBehaviour
         Transform icon1 = top.Find("icon 1");
         Transform icon2 = top.Find("icon 2");
 
-        IHero hero = GameManager.Instance.gameHeroData.herosArray[heroIndex];
+        IHero hero = GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
         //将英雄信息作为组件附加在对象上
         name.GetComponent<Text>().text = hero.UIName;
         cost.GetComponent<Text>().text = hero.Cost.ToString();
@@ -106,9 +106,9 @@ public class UI : MonoBehaviour
     //需要的时候更新UI界面
     public void UpdateUI()
     {
-        goldText.text = GameManager.Instance.currentGold.ToString();
-        heroCountText.text = GameManager.Instance.currentHeroCount.ToString() + " / " + GameManager.Instance.currentLevel.ToString();
-        hpText.text = "HP " + GameManager.Instance.currentHP.ToString();
+        goldText.text = GameManager.GetInstance().currentGold.ToString();
+        heroCountText.text = GameManager.GetInstance().currentHeroCount.ToString() + " / " + GameManager.GetInstance().currentLevel.ToString();
+        hpText.text = "HP " + GameManager.GetInstance().currentHP.ToString();
 
         //hide bonusus UI
         foreach (GameObject go in bonusPanels)
@@ -117,11 +117,11 @@ public class UI : MonoBehaviour
         }
 
         //if not null
-        if (GameManager.Instance.heroTypeCount != null)
+        if (GameManager.GetInstance().heroTypeCount != null)
         {
             int i = 0;
             //iterate bonuses
-            foreach (KeyValuePair<HeroType, int> m in GameManager.Instance.heroTypeCount)
+            foreach (KeyValuePair<HeroType, int> m in GameManager.GetInstance().heroTypeCount)
             {
                 //Now you can access the key and value both separately from this attachStat as:
                 GameObject bonusUI = bonusPanels[i];
@@ -140,7 +140,7 @@ public class UI : MonoBehaviour
     //更新计时器
     public void UpdateTimerText()
     {
-       timerText.text=GameManager.Instance.timerDisplay.ToString();
+       timerText.text=GameManager.GetInstance().timerDisplay.ToString();
     }
 
     //设置计时器的可见性

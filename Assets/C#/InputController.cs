@@ -65,12 +65,12 @@ public class InputController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            GameManager.Instance.StartDrag();
+            GameManager.GetInstance().StartDrag();
         }
 
         if (Input.GetMouseButtonUp(0))
         {
-            GameManager.Instance.StopDrag();
+            GameManager.GetInstance().StopDrag();
         }
 
         mousePosition = Input.mousePosition;

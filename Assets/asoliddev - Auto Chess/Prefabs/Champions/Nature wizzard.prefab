@@ -6797,7 +6797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6285827556954042331}
   - component: {fileID: -7582991415956163537}
-  - component: {fileID: 3983096412973717389}
+  - component: {fileID: 1176298153990505877}
   - component: {fileID: -8920155894159340517}
   m_Layer: 0
   m_Name: Nature wizzard
@@ -6844,7 +6844,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3983096412973717389
+--- !u!114 &1176298153990505877
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6853,7 +6853,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6285827556954042335}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: f6d487ac37cd9db4a89a473d5eb7a835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
@@ -6863,7 +6863,6 @@ MonoBehaviour:
   gridPositionX: 0
   gridPositionZ: 0
   teamID: 0
-  hero: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0

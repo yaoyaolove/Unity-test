@@ -6461,7 +6461,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5904177654570877739}
   - component: {fileID: 3858433098675416327}
-  - component: {fileID: 8172611370242386054}
+  - component: {fileID: 1220487839241147443}
   - component: {fileID: 7914465627810356036}
   m_Layer: 0
   m_Name: Fire Archer
@@ -6508,7 +6508,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8172611370242386054
+--- !u!114 &1220487839241147443
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6517,7 +6517,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5904177654570877743}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b716737d9c006942ac0a48fb72e58ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,

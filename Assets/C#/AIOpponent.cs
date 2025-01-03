@@ -78,7 +78,7 @@ public class AIOpponent : MonoBehaviour
             }
 
             //ÕÊº“ ’µΩ…À∫¶
-            GameManager.Instance.TakeDamage(damage);
+            GameManager.GetInstance().TakeDamage(damage);
 
             ResetHeros();
 
@@ -115,15 +115,16 @@ public class AIOpponent : MonoBehaviour
             return;
 
         int heroIndex = shop.GetRandomHeroIndex();
-        IHero hero=GameManager.Instance.gameHeroData.herosArray[heroIndex];
+        IHero hero=GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
 
-        GameObject heroPrefab = Instantiate(GameManager.Instance.gameHeroData.prefabs[heroIndex]);
+        GameObject heroPrefab = Instantiate(GameManager.GetInstance().gameHeroData.prefabs[heroIndex]);
 
         gridHerosArray[indexX, indexZ] = heroPrefab;
 
         HeroController heroController = heroPrefab.GetComponent<HeroController>();
 
-        heroController.Init(heroIndex, HeroController.TEAMID_AI);
+        heroController.CreateHero();
+        heroController.Init(HeroController.TEAMID_AI);
 
         heroController.SetGridPosition(MyMap.GRIDTYPE_HEXA_MAP, indexX, indexZ + 4);
 
@@ -177,7 +178,7 @@ public class AIOpponent : MonoBehaviour
         bool allDead = IsAllHeroDead();
 
         if (allDead)
-            GameManager.Instance.EndRound();
+            GameManager.GetInstance().EndRound();
     }
 
     private bool IsAllHeroDead()

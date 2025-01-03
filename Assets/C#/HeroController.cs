@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static UnityEngine.GraphicsBuffer;
 
-public class HeroController : MonoBehaviour
+public abstract class HeroController : MonoBehaviour
 {
     public static int TEAMID_PLAYER = 0;
     public static int TEAMID_AI = 1;
@@ -45,20 +45,20 @@ public class HeroController : MonoBehaviour
     [HideInInspector]
     public int lvl = 1;
 
-    private MyMap map;
-    private AIOpponent aIOpponent;
-    private HeroAnimation heroAnimation;
-    private GameObject target;
-    private WorldCanvasController worldCanvasController;
+    protected MyMap map;
+    protected AIOpponent aIOpponent;
+    protected HeroAnimation heroAnimation;
+    protected GameObject target;
+    protected WorldCanvasController worldCanvasController;
 
 
     //NavMeshAgent 是 Unity 中用于实现智能寻路和导航的一个组件
-    private NavMeshAgent navMeshAgent;
+    protected NavMeshAgent navMeshAgent;
 
-    private Vector3 gridTargetPosition;
+    protected Vector3 gridTargetPosition;
 
     //该英雄是否在被拖拽状态
-    private bool _isDragged = false;
+    protected bool _isDragged = false;
     public bool IsDragged
     {
         get { return _isDragged; }
@@ -73,18 +73,18 @@ public class HeroController : MonoBehaviour
     public bool isDead = false;
 
 
-    private bool isInCombat = false;
-    private float combatTimer = 0;
+    protected bool isInCombat = false;
+    protected float combatTimer = 0;
 
     //表示被眩晕状态
-    private bool isStuned = false;
-    private float stunTimer = 0;
+    protected bool isStuned = false;
+    protected float stunTimer = 0;
 
-    private List<Effect> effects;
+    protected List<Effect> effects;
 
-    private List<string> equipments;
+    protected List<string> equipments;
 
-    private IAttackBehavior attackEffect;
+    protected IAttackBehavior attackEffect;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -113,7 +113,7 @@ public class HeroController : MonoBehaviour
         //这一段没看懂在干啥
         else
         {
-            if (GameManager.Instance.currentGameStage == GameStage.Preparation)
+            if (GameManager.GetInstance().currentGameStage == GameStage.Preparation)
             {
                 //calc distance
                 float distance = Vector3.Distance(gridTargetPosition, this.transform.position);
@@ -197,10 +197,11 @@ public class HeroController : MonoBehaviour
         }
     }
 
+    public abstract void CreateHero();
+
     //初始化函数
-    public void Init(int heroIndex, int _teamID)
+    public void Init(int _teamID)
     {
-        hero = GameManager.Instance.gameHeroData.herosArray[heroIndex];
         teamID = _teamID;
 
         //store scripts
@@ -226,11 +227,13 @@ public class HeroController : MonoBehaviour
         //随机生成装备
         if (Random.Range(0, 10) < 5)
         {
-            equipments.Add("Vampire");
+            equipments.Add("Killer");
+            Debug.Log("获得装备：造成额外伤害");
         }
         if (Random.Range(0, 10) < 5)
         {
-            equipments.Add("Killer");
+            equipments.Add("Vampire");
+            Debug.Log("获得装备：吸血");
         }
 
         //用装饰器修饰攻击效果
@@ -372,11 +375,10 @@ public class HeroController : MonoBehaviour
     }
 
     //寻敌函数
-    private GameObject FindTarget()
+    protected GameObject FindTarget()
     {
         GameObject closestEnemy = null;
         float bestDistance = 1000;
-
         if (teamID == TEAMID_PLAYER)
         {
             for (int x = 0; x < MyMap.hexMapSizeX; x++)
@@ -409,29 +411,30 @@ public class HeroController : MonoBehaviour
             {
                 for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
                 {
-                    if (GameManager.Instance.gridHerosArray[x, z] != null)
+                    if (GameManager.GetInstance().gridHerosArray[x, z] != null)
                     {
-                        HeroController championController = GameManager.Instance.gridHerosArray[x, z].GetComponent<HeroController>();
+                        HeroController championController = GameManager.GetInstance().gridHerosArray[x, z].GetComponent<HeroController>();
 
                         if (championController.isDead == false)
                         {
-                            float distance = Vector3.Distance(this.transform.position, GameManager.Instance.gridHerosArray[x, z].transform.position);
+                            float distance = Vector3.Distance(this.transform.position, GameManager.GetInstance().gridHerosArray[x, z].transform.position);
 
                             if (distance < bestDistance)
                             {
                                 bestDistance = distance;
-                                closestEnemy = GameManager.Instance.gridHerosArray[x, z];
+                                closestEnemy = GameManager.GetInstance().gridHerosArray[x, z];
                             }
                         }
                     }
                 }
             }
+            
         }
         return closestEnemy;
     }
 
     //尝试攻击函数
-    private void TryAttackNewTarget()
+    protected void TryAttackNewTarget()
     {
         //寻敌
         target = FindTarget();
@@ -463,7 +466,7 @@ public class HeroController : MonoBehaviour
     }
 
     //攻击函数
-    private void DoAttack()
+    protected void DoAttack()
     {
         isAttacking = true;
 
@@ -486,7 +489,7 @@ public class HeroController : MonoBehaviour
             List<HeroBonus> activeBonuses = null;
 
             if (teamID == TEAMID_PLAYER)
-                activeBonuses = GameManager.Instance.activeBonusList;
+                activeBonuses = GameManager.GetInstance().activeBonusList;
             else if (teamID == TEAMID_AI)
                 activeBonuses = aIOpponent.activeBonusList;
 
@@ -520,7 +523,7 @@ public class HeroController : MonoBehaviour
         List<HeroBonus> activeBonuses = null;
 
         if (teamID == TEAMID_PLAYER)
-            activeBonuses = GameManager.Instance.activeBonusList;
+            activeBonuses = GameManager.GetInstance().activeBonusList;
         else if (teamID == TEAMID_AI)
             activeBonuses = aIOpponent.activeBonusList;
 
@@ -539,7 +542,7 @@ public class HeroController : MonoBehaviour
 
             //每有一个英雄阵亡都要判断是否有一方所有英雄均死亡
             aIOpponent.OnHeroDeath();
-            GameManager.Instance.OnHeroDeath();
+            GameManager.GetInstance().OnHeroDeath();
         }
 
         worldCanvasController.AddDamageText(this.transform.position + new Vector3(0, 2.5f, 0), damage);
@@ -599,7 +602,7 @@ public class HeroController : MonoBehaviour
         effect.Remove();
     }
 
-    public void Skill()
+    public virtual void Skill()
     {
         hero.Skill();
     }

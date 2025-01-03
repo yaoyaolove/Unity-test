@@ -5399,7 +5399,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5364804981758500476}
   - component: {fileID: -5301157269250113829}
-  - component: {fileID: 8716350602968943238}
+  - component: {fileID: 5301229073379664182}
   - component: {fileID: -2405471014369377394}
   m_Layer: 0
   m_Name: Frost Wizzard
@@ -5446,7 +5446,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &8716350602968943238
+--- !u!114 &5301229073379664182
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5455,7 +5455,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5364804981758500472}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: b29721732621d2f47b72b959b601f9c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
@@ -5465,7 +5465,6 @@ MonoBehaviour:
   gridPositionX: 0
   gridPositionZ: 0
   teamID: 0
-  hero: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0

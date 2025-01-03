@@ -7700,7 +7700,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7694065919687656631}
   - component: {fileID: -6900037831827450491}
-  - component: {fileID: 40615233311515567}
+  - component: {fileID: 1455537254707573469}
   - component: {fileID: -1095234624863033731}
   m_Layer: 0
   m_Name: Fire Wizzard
@@ -7747,7 +7747,7 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &40615233311515567
+--- !u!114 &1455537254707573469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7756,7 +7756,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7694065919687656627}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d0833e75c21d1c44a55169d274ae89f, type: 3}
+  m_Script: {fileID: 11500000, guid: ae308e1904f8b4b429a900274c38011c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   levelupEffectPrefab: {fileID: 6022893094628638925, guid: 3e052aff88b4eeb4da8c715d215dec1f,
@@ -7766,7 +7766,6 @@ MonoBehaviour:
   gridPositionX: 0
   gridPositionZ: 0
   teamID: 0
-  hero: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
   currentDamage: 0
