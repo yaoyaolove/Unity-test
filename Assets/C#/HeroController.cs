@@ -219,7 +219,8 @@ public abstract class HeroController : MonoBehaviour
         currentHealth = hero.Health;
         currentDamage = hero.Damage;
 
-        worldCanvasController.AddHealthBar(this.gameObject);
+        Color color = (teamID == TEAMID_PLAYER ? Color.green : Color.red);
+        worldCanvasController.AddHealthBar(this.gameObject, color);
 
         effects = new List<Effect>();
 
@@ -410,7 +411,7 @@ public abstract class HeroController : MonoBehaviour
             GridHeroIterator gridHeroIterator = GameManager.GetInstance().gridHeroIterator;
             gridHeroIterator.Reset();
             GameObject gridHero = null;
-            while (gridHero=gridHeroIterator.GetNext())
+            while (gridHero = gridHeroIterator.GetNext())
             {
                 HeroController championController = gridHero.GetComponent<HeroController>();
 
@@ -425,7 +426,7 @@ public abstract class HeroController : MonoBehaviour
                     }
                 }
             }
-            
+
         }
         return closestEnemy;
     }

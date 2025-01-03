@@ -28,7 +28,7 @@ public class HealthBar : MonoBehaviour
     {
         if (heroGO != null)
         {
-            this.transform.position = heroGO.transform.position + new Vector3(0, 1.5f + 1.5f * heroGO.transform.localScale.x, 0);
+            this.transform.position = heroGO.transform.position + new Vector3(0, 1.5f + 1.1f * heroGO.transform.localScale.x, 0);
             fillImage.fillAmount = heroController.currentHealth / heroController.maxHealth;
 
             if (heroController.currentHealth <= 0)
@@ -42,9 +42,10 @@ public class HealthBar : MonoBehaviour
         }
     }
 
-    public void Init(GameObject _heroGO)
+    public void Init(GameObject _heroGO, Color color)
     {
         heroGO = _heroGO;
+        fillImage.color = color;
         heroController = heroGO.GetComponent<HeroController>();
     }
 }

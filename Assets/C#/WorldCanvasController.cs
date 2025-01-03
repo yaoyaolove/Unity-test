@@ -32,11 +32,11 @@ public class WorldCanvasController : MonoBehaviour
     }
 
     //Ìí¼ÓÑªÌõ
-    public void AddHealthBar(GameObject championGO)
+    public void AddHealthBar(GameObject championGO,Color color)
     {
         GameObject go = Instantiate(healthBarPrefab);
         go.transform.SetParent(worldCanvas.transform);
 
-        go.GetComponent<HealthBar>().Init(championGO);
+        go.GetComponent<HealthBar>().Init(championGO,color);
     }
 }
