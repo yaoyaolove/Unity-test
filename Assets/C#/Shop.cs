@@ -57,7 +57,8 @@ public class Shop : MonoBehaviour
     //¹ºÂòÓ¢ÐÛ
     public void BuyHero(int index)
     {
-        bool isSuccess = GameManager.Instance.BuyHeroFromShop(index);
+        int heroIndex = availableHeroArray[index];
+        bool isSuccess = GameManager.Instance.BuyHeroFromShop(heroIndex);
         if (isSuccess)
         {
             uI.HideHeroFrame(index);
