@@ -8,7 +8,7 @@ using UnityEngine;
 public class GridHeroIterator : HeroIterator
 {
     private GridHerosArray heros;
-    private int prex = 0, prez = 0;//图上的坐标
+    private int x = 0, z = 0;//图上的坐标
 
     public GridHeroIterator(GridHerosArray heros)
     {
@@ -17,24 +17,26 @@ public class GridHeroIterator : HeroIterator
 
     public GameObject GetNext()
     {
-        for (int x = prex; x < MyMap.hexMapSizeX; x++)
+        GameObject hero = null;
+        while (hero == null && x < MyMap.hexMapSizeX && z < MyMap.hexMapSizeZ / 2)
         {
-            for (int z = prez; z < MyMap.hexMapSizeZ / 2; z++)
+            if (heros.GetHero(x, z) != null)
             {
-                if (heros.GetHero(x, z) != null)
-                {
-                    prex = x;
-                    prez = z + 1;
-                    return heros.GetHero(x, z);
-                }
+                hero = heros.GetHero(x, z);
+            }
+            z++;
+            if (z == MyMap.hexMapSizeZ / 2)
+            {
+                z = 0;
+                x++;
             }
         }
-        return null;
+        return hero;
     }
 
     public void Reset()
     {
-        prex = 0;
-        prez = 0;
+        x = 0;
+        z = 0;
     }
 }

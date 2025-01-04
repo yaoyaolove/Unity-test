@@ -39,7 +39,7 @@ public class GridHerosArray : IHerosArray
     {
         for (int x = 0; x < MyMap.hexMapSizeX; x++)
         {
-            for (int z = 0; z < MyMap.hexMapSizeZ; z++)
+            for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
             {
                 heros[x, z] = null;
             }
