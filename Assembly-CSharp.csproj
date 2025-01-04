@@ -76,7 +76,6 @@
     <Compile Include="Assets\C#\GameManager.cs" />
     <Compile Include="Assets\C#\MyMap.cs" />
     <Compile Include="Assets\C#\Player.cs" />
-    <Compile Include="Assets\C#\IHero.cs" />
     <Compile Include="Assets\C#\HeroController\FrostKnightController.cs" />
     <Compile Include="Assets\C#\Hero\FrostWizard.cs" />
     <Compile Include="Assets\C#\Hero\FireWizard.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Assets\C#\GameStage\Preparation.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\C#\Hero\FireArcher.cs" />
-    <Compile Include="Assets\C#\HeroDecorator.cs" />
     <Compile Include="Assets\C#\HeroType.cs" />
     <Compile Include="Assets\C#\GridHerosArray.cs" />
     <Compile Include="Assets\C#\HeroController\FireKnightController.cs" />

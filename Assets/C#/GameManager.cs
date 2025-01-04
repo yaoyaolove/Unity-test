@@ -240,7 +240,7 @@ public class GameManager : MonoBehaviour
     //从商店购买英雄的具体实现
     public bool BuyHeroFromShop(int heroIndex)
     {
-        IHero hero = gameHeroData.herosArray[heroIndex];
+        Hero hero = gameHeroData.herosArray[heroIndex];
         GameObject prefab = gameHeroData.prefabs[heroIndex];
         //得到第一个空的备战席位置
         int emptyIndex = -1;
@@ -295,7 +295,7 @@ public class GameManager : MonoBehaviour
     }
 
     //尝试对英雄进行升级
-    public void TryUpgradeHero(IHero hero)
+    public void TryUpgradeHero(Hero hero)
     {
         //用于统计该类型英雄的一星和二星英雄个数而设置的临时变量
         List<HeroController> heroList_lvl_1 = new List<HeroController>();
@@ -633,7 +633,7 @@ public class GameManager : MonoBehaviour
         GameObject gridHero = null;
         while (gridHero = gridHeroIterator.GetNext())
         {
-            IHero c = gridHero.GetComponent<HeroController>().hero;
+            Hero c = gridHero.GetComponent<HeroController>().hero;
 
             if (heroTypeCount.ContainsKey(c.Type1))
             {

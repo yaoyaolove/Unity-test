@@ -92,7 +92,7 @@ public class UI : MonoBehaviour
         Transform icon1 = top.Find("icon 1");
         Transform icon2 = top.Find("icon 2");
 
-        IHero hero = GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
+        Hero hero = GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
         //将英雄信息作为组件附加在对象上
         name.GetComponent<Text>().text = hero.UIName;
         cost.GetComponent<Text>().text = hero.Cost.ToString();

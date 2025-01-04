@@ -9,7 +9,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Hero", menuName = "Scriptable Objects/Hero")]
-public abstract class Hero : ScriptableObject, IHero
+public abstract class Hero : ScriptableObject
 {
     // 英雄发射的攻击投掷物
     public GameObject attackProjectile;

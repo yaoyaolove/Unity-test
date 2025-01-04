@@ -31,7 +31,7 @@ public abstract class HeroController : MonoBehaviour
     public int teamID = 0;
 
     [HideInInspector]
-    public IHero hero;
+    public Hero hero;
 
     [HideInInspector]
     public float maxHealth = 0;

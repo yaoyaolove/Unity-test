@@ -115,7 +115,7 @@ public class AIOpponent : MonoBehaviour
             return;
 
         int heroIndex = shop.GetRandomHeroIndex();
-        IHero hero=GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
+        Hero hero=GameManager.GetInstance().gameHeroData.herosArray[heroIndex];
 
         GameObject heroPrefab = Instantiate(GameManager.GetInstance().gameHeroData.prefabs[heroIndex]);
 
@@ -235,7 +235,7 @@ public class AIOpponent : MonoBehaviour
             {
                 if (gridHerosArray[x, z] != null)
                 {
-                    IHero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
+                    Hero c = gridHerosArray[x, z].GetComponent<HeroController>().hero;
 
                     if (heroTypeCount.ContainsKey(c.Type1))
                     {
