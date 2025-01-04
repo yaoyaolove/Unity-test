@@ -17,6 +17,12 @@ public class GameManager : MonoBehaviour
 {
     //单例模式维护的静态变量
     private static GameManager Instance;
+
+    private GameManager()
+    {
+
+    }
+
     public static GameManager GetInstance() => Instance;
     // 在Awake中确保只存在一个实例
     private void Awake()
