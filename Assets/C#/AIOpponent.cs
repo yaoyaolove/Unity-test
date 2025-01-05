@@ -25,6 +25,17 @@ public class AIOpponent : MonoBehaviour
     //当玩家输掉一轮后收到的伤害
     public int AIDamage = 2;
 
+    private void OnEnable()
+    {
+        EventManager.Subscribe<GameStage>("OnGameStageComplete", OnGameStageComplete);
+        EventManager.Subscribe("Restart", Restart);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Unsubscribe<GameStage>("OnGameStageComplete", OnGameStageComplete);
+        EventManager.Unsubscribe("Restart", Restart);
+    }
 
     //地图创建后调用
     public void OnMapReady()

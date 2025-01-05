@@ -149,7 +149,8 @@ public class GameManager : MonoBehaviour
     public void OnGameStageComplete()
     {
         //告知AI阶段完成
-        aIOpponent.OnGameStageComplete(currentGameStage);
+        EventManager.Publish("OnGameStageComplete", currentGameStage);
+        //aIOpponent.OnGameStageComplete(currentGameStage);
         //如果准备阶段完成
         gameStage.OnGameStageComplete();
     }
@@ -634,7 +635,8 @@ public class GameManager : MonoBehaviour
         EventManager.Publish("UpdateUI");
 
         //restart ai
-        aIOpponent.Restart();
+        EventManager.Publish("Restart");
+        //aIOpponent.Restart();
 
         //show hide ui
         EventManager.Publish("ShowGameScreen");

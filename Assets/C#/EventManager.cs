@@ -46,4 +46,39 @@ public static class EventManager
             }
         }
     }
+
+
+    // 订阅带参数事件
+    public static void Subscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDictionary.TryGetValue(eventName, out Delegate thisEvent))
+        {
+            eventDictionary[eventName] = Delegate.Combine(thisEvent, listener);
+        }
+        else
+        {
+            eventDictionary.Add(eventName, listener);
+        }
+    }
+
+    // 取消订阅带参数事件
+    public static void Unsubscribe<T>(string eventName, Action<T> listener)
+    {
+        if (eventDictionary.TryGetValue(eventName, out Delegate thisEvent))
+        {
+            eventDictionary[eventName] = Delegate.Remove(thisEvent, listener);
+        }
+    }
+
+    // 发布带参数事件
+    public static void Publish<T>(string eventName, T arg)
+    {
+        if (eventDictionary.TryGetValue(eventName, out Delegate thisEvent))
+        {
+            if (thisEvent is Action<T> action)
+            {
+                action.Invoke(arg);
+            }
+        }
+    }
 }
