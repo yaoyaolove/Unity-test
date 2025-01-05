@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour
     //从商店购买英雄的具体实现
     public bool BuyHeroFromShop(int heroIndex)
     {
-        Hero hero = gameHeroData.herosArray[heroIndex];
+        int cost = gameHeroData.herosArray[heroIndex].cost;
         GameObject prefab = gameHeroData.prefabs[heroIndex];
         //得到第一个空的备战席位置
         int emptyIndex = -1;
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
             return false;
 
         //如果钱不够
-        if (currentGold < hero.Cost)
+        if (currentGold < cost)
             return false;
 
         //实例化一个预制件
@@ -206,10 +206,10 @@ public class GameManager : MonoBehaviour
 
         //准备阶段尝试进行英雄的升级
         if (currentGameStage == GameStage.Preparation)
-            TryUpgradeHero(hero);
+            TryUpgradeHero(heroIndex);
 
         //减少金币
-        currentGold -= hero.Cost;
+        currentGold -= cost;
 
         // 发布更新页面事件
         EventManager.Publish("UpdateUI");
@@ -218,8 +218,9 @@ public class GameManager : MonoBehaviour
     }
 
     //尝试对英雄进行升级
-    public void TryUpgradeHero(Hero hero)
+    public void TryUpgradeHero(int heroIndex)
     {
+        Hero hero = gameHeroData.herosArray[heroIndex];
         //用于统计该类型英雄的一星和二星英雄个数而设置的临时变量
         List<HeroController> heroList_lvl_1 = new List<HeroController>();
         List<HeroController> heroList_lvl_2 = new List<HeroController>();
