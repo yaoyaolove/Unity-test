@@ -17,13 +17,13 @@ public class Preparation : IGameStage
 
         gameManager.UpdateTimerDisplayToRestTime(duration);
 
-        gameManager.uI.UpdateTimerText();
+        EventManager.Publish("UpdateTimerText");
+        // gameManager.uI.UpdateTimerText();
 
         if (gameManager.JudgeTimeUp(duration))
         {
             gameManager.ResetTimer();
-            EventManager.Publish("GameStageComplete");
-            //gameManager.OnGameStageComplete();
+            gameManager.OnGameStageComplete();
         }
     }
 

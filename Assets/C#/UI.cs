@@ -37,6 +37,7 @@ public class UI : MonoBehaviour
         EventManager.Subscribe("ShowLossScreen", ShowLossScreen);
         EventManager.Subscribe("ShowTimerText", ShowTimerText);
         EventManager.Subscribe("HideTimerText", HideTimerText);
+        EventManager.Subscribe("UpdateTimerText", UpdateTimerText);
     }
 
     private void OnDisable()
@@ -46,6 +47,7 @@ public class UI : MonoBehaviour
         EventManager.Unsubscribe("ShowLossScreen", ShowLossScreen);
         EventManager.Unsubscribe("ShowTimerText", ShowTimerText);
         EventManager.Unsubscribe("HideTimerText", HideTimerText);
+        EventManager.Unsubscribe("UpdateTimerText", UpdateTimerText);
     }
 
     //UI接口，点击英雄卡片时调用，这里命名还需要进行规范

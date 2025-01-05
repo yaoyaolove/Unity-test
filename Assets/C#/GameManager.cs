@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     public readonly int HeroCounts = 9;
     public MyMap map;
-    //public UI uI;
+    public UI uI;
     public InputController inputController;
     public GameHeroData gameHeroData;
     public Shop shop;
@@ -148,15 +148,10 @@ public class GameManager : MonoBehaviour
     //当游戏阶段结束
     public void OnGameStageComplete()
     {
-        EventManager.Publish("OnGameStageComplete", currentGameStage);
-        EventManager.Publish("OnGameStageComplete");
         //告知AI阶段完成
-        //aIOpponent.OnGameStageComplete(currentGameStage);
+        aIOpponent.OnGameStageComplete(currentGameStage);
         //如果准备阶段完成
         gameStage.OnGameStageComplete();
-
-        // 发布游戏阶段结束事件
-        //EventManager.Publish("GameStageComplete");
     }
 
 
