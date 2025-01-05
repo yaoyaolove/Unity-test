@@ -33,7 +33,8 @@ public class Combat : IGameStage
     {
         gameManager.ChangeStage(new Preparation());
 
-        gameManager.uI.SetTimerTextActive(true);
+        EventManager.Publish("ShowTimerText");
+        //gameManager.uI.SetTimerTextActive(true);
 
         gameManager.ResetHeros();
 
@@ -47,7 +48,7 @@ public class Combat : IGameStage
         gameManager.currentGold += gameManager.CalculateIncome();
 
         //更新UI
-        gameManager.uI.UpdateUI();
+        EventManager.Publish("UpdateUI");
 
         //刷新商店
         gameManager.shop.RefreshShop(true);
@@ -55,8 +56,9 @@ public class Combat : IGameStage
         //检查是否失败
         if (gameManager.currentHP <= 0)
         {
-            gameManager.ChangeStage(new Loss());
-            gameManager.uI.ShowLossScreen();
+            gameManager.ChangeStage(new Loss()); 
+            EventManager.Publish("ShowLossScreen");
+            //gameManager.uI.ShowLossScreen();
         }
     }
 }

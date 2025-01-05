@@ -18,10 +18,7 @@ public class GameManager : MonoBehaviour
     //单例模式维护的静态变量
     private static GameManager Instance;
 
-    private GameManager()
-    {
-
-    }
+    private GameManager(){ }
 
     public static GameManager GetInstance() => Instance;
     // 在Awake中确保只存在一个实例
@@ -103,7 +100,9 @@ public class GameManager : MonoBehaviour
         gridHerosArray = new GridHerosArray();
         gridHeroIterator = new GridHeroIterator(gridHerosArray);
 
-        uI.UpdateUI();
+        // 发布更新页面事件
+        EventManager.Publish("UpdateUI");
+        //uI.UpdateUI();
     }
 
     // Update is called once per frame
@@ -149,91 +148,15 @@ public class GameManager : MonoBehaviour
     //当游戏阶段结束
     public void OnGameStageComplete()
     {
+        EventManager.Publish("OnGameStageComplete", currentGameStage);
+        EventManager.Publish("OnGameStageComplete");
         //告知AI阶段完成
-        aIOpponent.OnGameStageComplete(currentGameStage);
+        //aIOpponent.OnGameStageComplete(currentGameStage);
         //如果准备阶段完成
         gameStage.OnGameStageComplete();
-        //if (currentGameStage == GameStage.Preparation)
-        //{
-        //    //进入战斗阶段
-        //    currentGameStage = GameStage.Combat;
 
-        //    //将指示器均隐藏，这是为了防止你在拖拽英雄的过程中准备阶段结束
-        //    map.HideIndicators();
-
-        //    //计时器隐藏
-        //    uI.SetTimerTextActive(false);
-
-        //    if (draggedHero != null)
-        //    {
-        //        //这里要记住将英雄拖拽信息更新    
-        //        draggedHero.GetComponent<HeroController>().IsDragged = false;
-        //        draggedHero = null;
-        //    }
-
-        //    //备战席
-        //    for (int i = 0; i < ownHeroInventoryArray.Length; i++)
-        //    {
-        //        if (ownHeroInventoryArray[i] != null)
-        //        {
-        //            HeroController heroController = ownHeroInventoryArray[i].GetComponent<HeroController>();
-
-        //            heroController.OnCombatStart();
-        //        }
-        //    }
-
-        //    //六边形棋盘
-        //    for (int x = 0; x < MyMap.hexMapSizeX; x++)
-        //    {
-        //        for (int z = 0; z < MyMap.hexMapSizeZ / 2; z++)
-        //        {
-        //            if (gridHerosArray[x, z] != null)
-        //            {
-        //                HeroController heroController = gridHerosArray[x, z].GetComponent<HeroController>();
-
-        //                heroController.OnCombatStart();
-        //            }
-
-        //        }
-        //    }
-
-
-        //    //检查是否没有英雄，会直接判负，回合结束
-        //    if (IsAllHeroDead())
-        //        EndRound();
-
-        //}
-        //else if (currentGameStage == GameStage.Combat)
-        //{
-        //    currentGameStage = GameStage.Preparation;
-
-        //    uI.SetTimerTextActive(true);
-
-        //    ResetHeros();
-
-        //    //尝试对可能升级的英雄进行升级
-        //    for (int i = 0; i < gameHeroData.herosArray.Length; i++)
-        //    {
-        //        TryUpgradeHero(gameHeroData.herosArray[i]);
-        //    }
-
-        //    //增加加金币
-        //    currentGold += CalculateIncome();
-
-        //    //更新UI
-        //    uI.UpdateUI();
-
-        //    //刷新商店
-        //    shop.RefreshShop(true);
-
-        //    //检查是否失败
-        //    if (currentHP <= 0)
-        //    {
-        //        currentGameStage = GameStage.Loss;
-        //        uI.ShowLossScreen();
-        //    }
-
-        //}
+        // 发布游戏阶段结束事件
+        //EventManager.Publish("GameStageComplete");
     }
 
 
@@ -288,8 +211,8 @@ public class GameManager : MonoBehaviour
         //减少金币
         currentGold -= hero.Cost;
 
-        //更新金币数
-        uI.UpdateUI();
+        // 发布更新页面事件
+        EventManager.Publish("UpdateUI");
 
         return true;
     }
@@ -366,8 +289,8 @@ public class GameManager : MonoBehaviour
         //更新棋盘上人数
         currentHeroCount = GetHeroCountOnHexGrid();
 
-        //更新UI
-        uI.UpdateUI();
+        // 发布更新页面事件
+        EventManager.Publish("UpdateUI");
     }
 
     //从商店购买经验的具体实现
@@ -380,7 +303,8 @@ public class GameManager : MonoBehaviour
         {
             currentLevel++;
             currentGold -= 4;
-            uI.UpdateUI();
+            // 发布更新页面事件
+            EventManager.Publish("UpdateUI");
         }
     }
 
@@ -476,7 +400,8 @@ public class GameManager : MonoBehaviour
 
             currentHeroCount = GetHeroCountOnHexGrid();
 
-            uI.UpdateUI();
+            // 发布更新页面事件
+            EventManager.Publish("UpdateUI");
 
             //这是检测的要求
             draggedHero = null;
@@ -619,7 +544,9 @@ public class GameManager : MonoBehaviour
     {
         currentHP -= damage;
 
-        uI.UpdateUI();
+        // 发布更新页面事件
+        EventManager.Publish("UpdateUI");
+        //uI.UpdateUI();
 
     }
 
@@ -707,13 +634,14 @@ public class GameManager : MonoBehaviour
         currentLevel = 3;
         currentHeroCount = GetHeroCountOnHexGrid();
 
-        uI.UpdateUI();
+        // 发布更新页面事件
+        EventManager.Publish("UpdateUI");
 
         //restart ai
         aIOpponent.Restart();
 
         //show hide ui
-        uI.ShowGameScreen();
+        EventManager.Publish("ShowGameScreen");
 
 
     }

@@ -9,7 +9,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{CAF22054-FF9D-E80E-9C4A-B63617A948A6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -61,6 +62,7 @@
     <Analyzer Include="E:\software\6000.0.23f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\C#\EventManager.cs" />
     <Compile Include="Assets\C#\Shop.cs" />
     <Compile Include="Assets\C#\HeroIterator.cs" />
     <Compile Include="Assets\C#\AttackDecorator.cs" />

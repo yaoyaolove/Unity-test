@@ -7,6 +7,7 @@
 // 备注：
 // =============================================================================
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AIOpponent : MonoBehaviour
@@ -23,6 +24,16 @@ public class AIOpponent : MonoBehaviour
 
     //当玩家输掉一轮后收到的伤害
     public int AIDamage = 2;
+
+    private void OnEnable()
+    {
+        EventManager.Subscribe<GameStage>("OnGameStageComplete", OnGameStageComplete);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Unsubscribe< GameStage>("OnGameStageComplete", OnGameStageComplete);
+    }
 
     //地图创建后调用
     public void OnMapReady()

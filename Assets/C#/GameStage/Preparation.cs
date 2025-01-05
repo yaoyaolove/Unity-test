@@ -22,8 +22,8 @@ public class Preparation : IGameStage
         if (gameManager.JudgeTimeUp(duration))
         {
             gameManager.ResetTimer();
-
-            gameManager.OnGameStageComplete();
+            EventManager.Publish("GameStageComplete");
+            //gameManager.OnGameStageComplete();
         }
     }
 
@@ -35,7 +35,8 @@ public class Preparation : IGameStage
         gameManager.map.HideIndicators();
 
         //计时器隐藏
-        gameManager.uI.SetTimerTextActive(false);
+        EventManager.Publish("HideTimerText");
+        //gameManager.uI.SetTimerTextActive(false);
 
         GameObject draggedHero = gameManager.GetDraggedHero();
         if (draggedHero != null)

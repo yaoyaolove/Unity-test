@@ -30,6 +30,24 @@ public class UI : MonoBehaviour
     public GameObject bonusContainer;
     public GameObject bonusUIPrefab;
 
+    private void OnEnable()
+    {
+        EventManager.Subscribe("UpdateUI", UpdateUI);
+        EventManager.Subscribe("ShowGameScreen", ShowGameScreen);
+        EventManager.Subscribe("ShowLossScreen", ShowLossScreen);
+        EventManager.Subscribe("ShowTimerText", ShowTimerText);
+        EventManager.Subscribe("HideTimerText", HideTimerText);
+    }
+
+    private void OnDisable()
+    {
+        EventManager.Unsubscribe("UpdateUI", UpdateUI);
+        EventManager.Unsubscribe("ShowGameScreen", ShowGameScreen);
+        EventManager.Unsubscribe("ShowLossScreen", ShowLossScreen);
+        EventManager.Unsubscribe("ShowTimerText", ShowTimerText);
+        EventManager.Unsubscribe("HideTimerText", HideTimerText);
+    }
+
     //UI接口，点击英雄卡片时调用，这里命名还需要进行规范
     public void HeroFrameUI()
     {
@@ -141,6 +159,16 @@ public class UI : MonoBehaviour
     public void UpdateTimerText()
     {
        timerText.text=GameManager.GetInstance().timerDisplay.ToString();
+    }
+
+    public void ShowTimerText()
+    {
+        SetTimerTextActive(true);
+    }
+
+    public void HideTimerText()
+    {
+        SetTimerTextActive(false);
     }
 
     //设置计时器的可见性
