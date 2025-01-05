@@ -41,7 +41,7 @@ public class Combat : IGameStage
         //尝试对可能升级的英雄进行升级
         for (int i = 0; i < gameManager.gameHeroData.herosArray.Length; i++)
         {
-            gameManager.TryUpgradeHero(gameManager.gameHeroData.herosArray[i]);
+            gameManager.TryUpgradeHero(i);
         }
 
         //增加加金币
