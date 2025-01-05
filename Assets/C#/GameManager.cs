@@ -1,9 +1,9 @@
 // =============================================================================
 // 文件名称: GameManager.cs
-// 作者: 刘垚
+// 作者: 刘垚，陈雅瑄
 // 创建日期: 2024.11.18
-// 更新日期：2024.11.27
-// 使用的设计模式：单例模式
+// 更新日期：2024.1.5
+// 使用的设计模式：单例模式，发布-订阅模式
 // 备注：游戏的管理类，负责游戏进程等
 // =============================================================================
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 
     public readonly int HeroCounts = 9;
     public MyMap map;
-    public UI uI;
+    //public UI uI;
     public InputController inputController;
     public GameHeroData gameHeroData;
     public Shop shop;
