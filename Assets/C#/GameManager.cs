@@ -37,11 +37,11 @@ public class GameManager : MonoBehaviour
 
     public readonly int HeroCounts = 9;
     public MyMap map;
-    public UI uI;
+    //public UI uI;
     public InputController inputController;
     public GameHeroData gameHeroData;
     public Shop shop;
-    public AIOpponent aIOpponent;
+    //public AIOpponent aIOpponent;
 
     public IGameStage gameStage;
     public GameStage currentGameStage;
