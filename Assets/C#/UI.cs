@@ -1,9 +1,9 @@
 // =============================================================================
 // 文件名称: UI.cs
-// 作者: 刘垚
+// 作者: 刘垚，陈雅瑄
 // 创建日期: 2024.11.19
-// 更新日期：2024.11.24
-// 使用的设计模式：
+// 更新日期：2024.1.5
+// 使用的设计模式：发布-订阅模式
 // 备注：所有的UI接口，这里命名之后需要更改
 // =============================================================================
 using System.Collections.Generic;
@@ -30,6 +30,7 @@ public class UI : MonoBehaviour
     public GameObject bonusContainer;
     public GameObject bonusUIPrefab;
 
+    // 对象生命周期开始时订阅相关操作
     private void OnEnable()
     {
         EventManager.Subscribe("UpdateUI", UpdateUI);
@@ -37,8 +38,10 @@ public class UI : MonoBehaviour
         EventManager.Subscribe("ShowLossScreen", ShowLossScreen);
         EventManager.Subscribe("ShowTimerText", ShowTimerText);
         EventManager.Subscribe("HideTimerText", HideTimerText);
+        EventManager.Subscribe("UpdateTimerText", UpdateTimerText);
     }
 
+    // 对象生命周期结束时取消订阅
     private void OnDisable()
     {
         EventManager.Unsubscribe("UpdateUI", UpdateUI);
@@ -46,6 +49,7 @@ public class UI : MonoBehaviour
         EventManager.Unsubscribe("ShowLossScreen", ShowLossScreen);
         EventManager.Unsubscribe("ShowTimerText", ShowTimerText);
         EventManager.Unsubscribe("HideTimerText", HideTimerText);
+        EventManager.Unsubscribe("UpdateTimerText", UpdateTimerText);
     }
 
     //UI接口，点击英雄卡片时调用，这里命名还需要进行规范

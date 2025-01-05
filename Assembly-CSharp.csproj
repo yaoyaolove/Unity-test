@@ -62,7 +62,12 @@
     <Analyzer Include="E:\software\6000.0.23f1c1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\C#\BonusEffectStrategy\DamageBonusStrategy.cs" />
+    <Compile Include="Assets\C#\BonusEffectStrategy\DefenseBonusStrategy.cs" />
+    <Compile Include="Assets\C#\BonusEffectStrategy\HealBonusStrategy.cs" />
+    <Compile Include="Assets\C#\BonusEffectStrategy\StunBonusStrategy.cs" />
     <Compile Include="Assets\C#\EventManager.cs" />
+    <Compile Include="Assets\C#\IBonusEffectStrategy.cs" />
     <Compile Include="Assets\C#\Shop.cs" />
     <Compile Include="Assets\C#\HeroIterator.cs" />
     <Compile Include="Assets\C#\AttackDecorator.cs" />
